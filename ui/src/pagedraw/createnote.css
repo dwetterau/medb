@@ -12,49 +12,16 @@
 .createnote-createnote-3 {
     display: flex;
     flex-direction: column;
-    padding-bottom: 39px;
+    padding-top: 6px;
 }
 
 .createnote-0-0-0 {
     display: flex;
-    padding-right: 117px;
+    padding-left: 1px;
+    padding-right: 158px;
 }
 
-.createnote-0-0-0-0 {
-    width: 316px;
-    height: 172px;
-    flex-shrink: 0;
-    position: relative;
-}
-
-.createnote-0-0-0-0-0 {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    position: absolute;
-    top: 0px;
-    left: 0px;
-}
-
-.createnote-0-0-0-0-0-0 {
-    display: flex;
-}
-
-.createnote-rectangle-5 {
-    display: flex;
-    flex-direction: column;
-    padding-top: 5px;
-    padding-bottom: 56px;
-    background: rgb(255, 255, 255);
-    border: 1px solid rgba(255, 255, 255, 0.46);
-}
-
-.createnote-0-0-0-0-0-0-0-0 {
-    display: flex;
-    padding-right: 157px;
-}
-
-.createnote-text_2 {
+.createnote-notedescription-2 {
     width: 157px;
     flex-shrink: 0;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -69,12 +36,14 @@
     word-wrap: break-word;
 }
 
-.createnote-0-0-0-0-0-0-0-1 {
+.createnote-0-0-1 {
     display: flex;
     margin-top: 21px;
+    padding-left: 1px;
+    padding-right: 1px;
 }
 
-.createnote-note-input-1 {
+.createnote-noteinput-1 {
     width: 314px;
     height: 72px;
     flex-shrink: 0;
@@ -95,20 +64,14 @@
     border: 1px solid #cccccc;
 }
 
-.createnote-0-0-0-0-1 {
+.createnote-0-0-2 {
     display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    position: absolute;
-    top: 136px;
-    left: 1px;
+    margin-top: 21px;
+    padding-left: 1px;
+    padding-right: 1px;
 }
 
-.createnote-0-0-0-0-1-0 {
-    display: flex;
-}
-
-.createnote-rectangle_3 {
+.createnote-savebutton-2 {
     display: flex;
     flex-direction: column;
     padding-top: 9px;
@@ -119,7 +82,7 @@
     border: 1px solid rgba(0, 0, 0, 0.5);
 }
 
-.createnote-0-0-0-0-1-0-0-0 {
+.createnote-0-0-2-0-0 {
     display: flex;
     padding-left: 138px;
     padding-right: 137px;

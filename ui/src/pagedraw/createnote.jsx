@@ -7,29 +7,17 @@ function render() {
         <div className="createnote-0">
             <div className="createnote-createnote-3">
                 <div className="createnote-0-0-0">
-                    <div className="createnote-0-0-0-0">
-                        <div className="createnote-0-0-0-0-0">
-                            <div className="createnote-0-0-0-0-0-0">
-                                <div className="createnote-rectangle-5">
-                                    <div className="createnote-0-0-0-0-0-0-0-0">
-                                        <div className="createnote-text_2">
-                                            Create a quick note
-                                        </div>
-                                    </div>
-                                    <div className="createnote-0-0-0-0-0-0-0-1">
-                                        <textarea placeholder="Enter text..." className="createnote-note-input-1" /> 
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="createnote-0-0-0-0-1">
-                            <div className="createnote-0-0-0-0-1-0">
-                                <div onClick={this.props.handleSaveNote} className="createnote-rectangle_3">
-                                    <div className="createnote-0-0-0-0-1-0-0-0">
-                                        <div className="createnote-text_3">Save</div>
-                                    </div>
-                                </div>
-                            </div>
+                    <div className="createnote-notedescription-2">
+                        Create a quick note
+                    </div>
+                </div>
+                <div className="createnote-0-0-1">
+                    <textarea placeholder="Enter text..." className="createnote-noteinput-1" /> 
+                </div>
+                <div className="createnote-0-0-2">
+                    <div onClick={this.props.handleSaveNote} className="createnote-savebutton-2">
+                        <div className="createnote-0-0-2-0-0">
+                            <div className="createnote-text_3">Save</div>
                         </div>
                     </div>
                 </div>

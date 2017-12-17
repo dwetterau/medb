@@ -6,6 +6,11 @@ import (
 	"fmt"
 	"medb/storage"
 
+	"os"
+	"os/exec"
+
+	"time"
+
 	"github.com/google/uuid"
 )
 
@@ -53,5 +58,27 @@ func main() {
 		}
 	}
 	// Step 4: Create a new git commit with all the changes + all new files
+	err = commitToGIT(fmt.Sprintf("MeDB Sync - %v", time.Now().Unix()))
+	if err != nil {
+		panic(err)
+	}
+
 	// Step 5: Rebase on new changes?
+}
+
+func commitToGIT(message string) error {
+	cmd := exec.Command("git", "add", "-A")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		return err
+	}
+
+	// Now commit everything
+	cmd = exec.Command("git", "commit", "-am", message)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
+
 }

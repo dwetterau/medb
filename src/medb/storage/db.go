@@ -86,6 +86,7 @@ func (d dbImpl) ContentByPath() (map[string]string, error) {
 						resultChan <- filenameAndData{err: fileErr}
 						continue
 					}
+					// TODO: Make real files instead (parsing out headers if they're there)
 					resultChan <- filenameAndData{filename: filename, data: string(bytes)}
 				}
 			}

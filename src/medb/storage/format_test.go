@@ -11,7 +11,6 @@ const testHeader = "--BEGIN HEADER--\n" +
 	"Version: 1\n" +
 	"ID: 430bf597-74ac-40ad-9453-edcc353bc026\n" +
 	"CreationTS: 1513066695\n" +
-	"ModifiedTS: 1513066711\n" +
 	"--END HEADER--"
 
 func TestGenerateHeader(t *testing.T) {
@@ -24,7 +23,6 @@ func TestGenerateHeader(t *testing.T) {
 			version:    currentVersion,
 			id:         testUUID,
 			creationTS: time.Unix(1513066695, 0),
-			modifiedTS: time.Unix(1513066711, 0),
 		},
 	}
 	generatedHeader := f.generateHeader()
@@ -43,16 +41,15 @@ func TestParseFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	expectedFile := fileImpl{
+	expectedFile := &fileImpl{
 		header: headerImpl{
 			version:    currentVersion,
 			id:         testUUID,
 			creationTS: time.Unix(1513066695, 0),
-			modifiedTS: time.Unix(1513066711, 0),
 		},
 		content: "content\n",
 	}
-	if file != expectedFile {
+	if *file != *expectedFile {
 		t.Fatal(expectedFile, file)
 	}
 

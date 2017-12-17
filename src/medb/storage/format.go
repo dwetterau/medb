@@ -1,19 +1,13 @@
 package storage
 
 import (
-	"time"
-
-	"fmt"
-
-	"strings"
-
 	"errors"
-
-	"regexp"
-
-	"strconv"
-
+	"fmt"
 	"path"
+	"regexp"
+	"strconv"
+	"strings"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -27,7 +21,6 @@ Below is the only canonical example for version 1
 Version: 1
 ID: 430bf597-74ac-40ad-9453-edcc353bc026
 CreationTS: 1513066695
-ModifiedTS: 1513066711
 --END HEADER--
 content\n
 EOF
@@ -42,7 +35,6 @@ const (
 type File interface {
 	HasHeader() bool
 	CreateHeader() error
-	UpdateHeader()
 	ID() uuid.UUID
 	Name() string
 }
@@ -59,7 +51,6 @@ type headerImpl struct {
 	version    uint32
 	id         uuid.UUID
 	creationTS time.Time
-	modifiedTS time.Time
 }
 
 func (f *fileImpl) HasHeader() bool {
@@ -78,13 +69,8 @@ func (f *fileImpl) CreateHeader() error {
 		version:    currentVersion,
 		id:         id,
 		creationTS: now,
-		modifiedTS: now,
 	}
 	return nil
-}
-
-func (f *fileImpl) UpdateHeader() {
-	f.header.modifiedTS = time.Now()
 }
 
 func (f *fileImpl) ID() uuid.UUID {
@@ -102,7 +88,6 @@ func (f *fileImpl) generateHeader() string {
 		fmt.Sprintf("Version: %d", f.header.version),
 		fmt.Sprintf("ID: %s", f.header.id),
 		fmt.Sprintf("CreationTS: %d", f.header.creationTS.Unix()),
-		fmt.Sprintf("ModifiedTS: %d", f.header.modifiedTS.Unix()),
 		headerEnd,
 	}, "\n") + "\n"
 }
@@ -117,7 +102,7 @@ func parseFile(input string) (*fileImpl, error) {
 
 	// Try to parse the header
 	splitByNewlines := strings.Split(input, "\n")
-	if len(splitByNewlines) < 7 {
+	if len(splitByNewlines) < 6 {
 		return nil, errors.New("malformed header, not enough lines")
 	}
 	if splitByNewlines[0] != headerStart {
@@ -158,30 +143,17 @@ func parseFile(input string) (*fileImpl, error) {
 	}
 	creationTS := time.Unix(ts, 0)
 
-	// Parse the modified time
-	r = regexp.MustCompile("^ModifiedTS: ([0-9]+)$")
-	submatches = r.FindStringSubmatch(splitByNewlines[4])
-	if len(submatches) != 2 {
-		return nil, errors.New("malformed header, modifiedTS is incorrect")
-	}
-	ts, err = strconv.ParseInt(submatches[1], 10, 64)
-	if err != nil {
-		return nil, errors.New("malformed header, modifiedTS is incorrect")
-	}
-	modifiedTS := time.Unix(ts, 0)
-
 	// Lastly, check the header ending
-	if splitByNewlines[5] != headerEnd {
+	if splitByNewlines[4] != headerEnd {
 		return nil, errors.New("malformed header, header end is incorrect")
 	}
-	actualContent := strings.Join(splitByNewlines[6:], "\n")
+	actualContent := strings.Join(splitByNewlines[5:], "\n")
 
 	return &fileImpl{
 		header: headerImpl{
 			version:    uint32(version),
 			id:         id,
 			creationTS: creationTS,
-			modifiedTS: modifiedTS,
 		},
 		content: actualContent,
 	}, nil

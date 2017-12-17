@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"errors"
 	"io/ioutil"
 	"path"
 )
@@ -10,7 +11,8 @@ var blacklistedFolderNames = map[string]struct{}{
 }
 
 type DB interface {
-	ContentByPath() (map[string]string, error)
+	AllFiles() ([]File, error)
+	SaveFile(File) error
 }
 
 func NewDB(rootPath string) DB {
@@ -57,19 +59,18 @@ func (d dbImpl) scanForFilenames() ([]string, error) {
 	return fileSlice, nil
 }
 
-func (d dbImpl) ContentByPath() (map[string]string, error) {
+func (d dbImpl) AllFiles() ([]File, error) {
 	filenames, err := d.scanForFilenames()
 	if err != nil {
 		return nil, err
 	}
 
-	type filenameAndData struct {
-		filename string
-		data     string
-		err      error
+	type fileOrError struct {
+		file fileImpl
+		err  error
 	}
 	numWorkers := 10
-	resultChan := make(chan filenameAndData)
+	resultChan := make(chan fileOrError)
 	workChan := make(chan string)
 	stopChan := make(chan struct{})
 	defer close(stopChan)
@@ -83,11 +84,18 @@ func (d dbImpl) ContentByPath() (map[string]string, error) {
 				case filename := <-workChan:
 					bytes, fileErr := ioutil.ReadFile(filename)
 					if fileErr != nil {
-						resultChan <- filenameAndData{err: fileErr}
+						resultChan <- fileOrError{err: fileErr}
 						continue
 					}
-					// TODO: Make real files instead (parsing out headers if they're there)
-					resultChan <- filenameAndData{filename: filename, data: string(bytes)}
+					file, err := parseFile(string(bytes))
+					if err != nil {
+						resultChan <- fileOrError{err: fileErr}
+						continue
+					}
+					file.currentLocation = filename
+					resultChan <- fileOrError{
+						file: *file,
+					}
 				}
 			}
 		}()
@@ -98,13 +106,22 @@ func (d dbImpl) ContentByPath() (map[string]string, error) {
 		}
 	}()
 
-	contentByPath := make(map[string]string, len(filenames))
-	for len(contentByPath) < len(filenames) {
+	allFiles := make([]File, 0, len(filenames))
+	for len(allFiles) < len(filenames) {
 		result := <-resultChan
 		if result.err != nil {
 			return nil, err
 		}
-		contentByPath[result.filename] = result.data
+		allFiles = append(allFiles, &result.file)
 	}
-	return contentByPath, nil
+	return allFiles, nil
+}
+
+func (d dbImpl) SaveFile(fileToSave File) error {
+	f, ok := fileToSave.(*fileImpl)
+	if !ok {
+		return errors.New("don't know how to save this type of file")
+	}
+
+	return ioutil.WriteFile(f.currentLocation, []byte(f.generateHeader()+f.content), 0644)
 }

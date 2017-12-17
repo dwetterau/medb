@@ -7,13 +7,12 @@ import (
 	"github.com/google/uuid"
 )
 
-const testHeader = `--BEGIN HEADER--
-Version: 1
-ID: 430bf597-74ac-40ad-9453-edcc353bc026
-MD5: f75b8179e4bbe7e2b4a074dcef62de95
-CreationTS: 1513066695
-ModifiedTS: 1513066711
---END HEADER--`
+const testHeader = "--BEGIN HEADER--\n" +
+	"Version: 1\n" +
+	"ID: 430bf597-74ac-40ad-9453-edcc353bc026\n" +
+	"CreationTS: 1513066695\n" +
+	"ModifiedTS: 1513066711\n" +
+	"--END HEADER--"
 
 func TestGenerateHeader(t *testing.T) {
 	testUUID, err := uuid.Parse("430bf597-74ac-40ad-9453-edcc353bc026")
@@ -27,10 +26,10 @@ func TestGenerateHeader(t *testing.T) {
 			creationTS: time.Unix(1513066695, 0),
 			modifiedTS: time.Unix(1513066711, 0),
 		},
-		content: "content\n",
 	}
-	if f.generateHeader() != testHeader {
-		t.Fail()
+	generatedHeader := f.generateHeader()
+	if generatedHeader != testHeader+"\n" {
+		t.Fatal(generatedHeader, testHeader)
 	}
 }
 
@@ -57,9 +56,9 @@ func TestParseFile(t *testing.T) {
 		t.Fatal(expectedFile, file)
 	}
 
-	// Check a hash mismatch case
-	_, err = parseFile(testHeader + "\nnot_the_real_content\n")
-	if err.Error() != "malformed header, hash doesn't match content's hash" {
+	// Check a malformed header case
+	_, err = parseFile(testHeader + "trailing on last line" + "content\n")
+	if err.Error() != "malformed header, header end is incorrect" {
 		t.Fail()
 	}
 }

@@ -93,7 +93,7 @@ func (f *fileImpl) generateHeader() string {
 }
 
 func parseFile(input string) (*fileImpl, error) {
-	if input[:len(headerStart)] != headerStart {
+	if len(input) < len(headerStart) || input[:len(headerStart)] != headerStart {
 		// Assume there's no header
 		return &fileImpl{
 			content: input,

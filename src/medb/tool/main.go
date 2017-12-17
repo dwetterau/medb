@@ -58,7 +58,7 @@ func main() {
 		}
 	}
 	// Step 4: Create a new git commit with all the changes + all new files
-	err = commitToGIT(fmt.Sprintf("MeDB Sync - %v", time.Now().Unix()))
+	err = commitToGIT(rootPath, fmt.Sprintf("MeDB Sync - %v", time.Now().Unix()))
 	if err != nil {
 		panic(err)
 	}
@@ -66,13 +66,35 @@ func main() {
 	// Step 5: Rebase on new changes?
 }
 
-func commitToGIT(message string) error {
+func commitToGIT(rootPath string, message string) error {
+	curDir, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	defer os.Chdir(curDir)
+
+	err = os.Chdir(rootPath)
+	if err != nil {
+		fmt.Println("1")
+		return err
+	}
 	cmd := exec.Command("git", "add", "-A")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	err := cmd.Run()
+	err = cmd.Run()
 	if err != nil {
 		return err
+	}
+
+	// See if there's anything to commit
+	cmd = exec.Command("git", "diff-index", "--quiet", "HEAD")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err == nil {
+		// Nothing to commit, return!
+		fmt.Println("Nothing to commit.")
+		return nil
 	}
 
 	// Now commit everything

@@ -9,6 +9,9 @@ import (
 var blacklistedFolderNames = map[string]struct{}{
 	".git": {},
 }
+var blacklistedFileNames = map[string]struct{}{
+	".gitignore": {},
+}
 
 type DB interface {
 	AllFiles() ([]File, error)
@@ -47,6 +50,9 @@ func (d dbImpl) scanForFilenames() ([]string, error) {
 					directories = append(directories, p)
 				}
 			} else {
+				if _, ok := blacklistedFileNames[info.Name()]; ok {
+					continue
+				}
 				files[p] = struct{}{}
 			}
 		}

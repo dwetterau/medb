@@ -4,14 +4,13 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"medb/storage"
-
 	"os"
 	"os/exec"
-
 	"time"
 
 	"github.com/google/uuid"
+
+	"medb/storage"
 )
 
 func main() {

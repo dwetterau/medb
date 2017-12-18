@@ -9,7 +9,7 @@ Work in progress.
 
 ## Save changes
 ```
-go build /path/to/medb/src/medb/tool/main.go --root="/path/to/your/db"
+go run /path/to/medb/src/medb/tool/sync/main.go --root="/path/to/your/db"
 ```
 
 ## Coming soon

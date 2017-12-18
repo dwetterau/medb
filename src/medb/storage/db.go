@@ -7,7 +7,8 @@ import (
 )
 
 var blacklistedFolderNames = map[string]struct{}{
-	".git": {},
+	".git":  {},
+	".medb": {},
 }
 var blacklistedFileNames = map[string]struct{}{
 	".gitignore": {},

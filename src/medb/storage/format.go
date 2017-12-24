@@ -37,6 +37,7 @@ type File interface {
 	CreateHeader() error
 	ID() uuid.UUID
 	Name() string
+	Path() string
 }
 
 type fileImpl struct {
@@ -80,6 +81,10 @@ func (f *fileImpl) ID() uuid.UUID {
 func (f *fileImpl) Name() string {
 	_, name := path.Split(f.currentLocation)
 	return name
+}
+
+func (f *fileImpl) Path() string {
+	return f.currentLocation
 }
 
 func (f *fileImpl) generateHeader() string {

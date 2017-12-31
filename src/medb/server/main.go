@@ -9,21 +9,30 @@ import (
 	"sort"
 	"strings"
 
+	"medb/server/user"
+
+	"github.com/alexedwards/scs"
 	"github.com/google/uuid"
 )
 
 func main() {
 	var staticDir string
-	var rootPath string
+	var userFilePath string
+	var sessionSecret string
+
 	flag.StringVar(&staticDir, "static", staticDir, "path to the static dir for the ui")
-	flag.StringVar(&rootPath, "root", rootPath, "path to the root of the db instance")
+	flag.StringVar(&userFilePath, "usersFilePath", userFilePath, "path to the file with user information")
+	flag.StringVar(&sessionSecret, "sessionSecret", sessionSecret, "32 char random string to use for the sessions")
 	flag.Parse()
 
 	if staticDir == "" {
 		panic("Must specify static dir!")
 	}
-	if rootPath == "" {
-		panic("Must specify root path!")
+	if userFilePath == "" {
+		panic("Must specify path to the users file!")
+	}
+	if len(sessionSecret) != 32 {
+		panic("Must specify 32 char session secret!")
 	}
 
 	staticServer := http.FileServer(http.Dir(staticDir))
@@ -31,8 +40,17 @@ func main() {
 	http.Handle("/static/", staticServer)
 	http.HandleFunc("/", rootHandler(staticDir))
 
+	// Session manager setup
+	manager := scs.NewCookieManager(sessionSecret)
+	// Let the cookie stay in the browser across browser restarts
+	manager.Persist(true)
+
+	// User store setup
+	store := user.NewStore(userFilePath)
+
 	// API v1
-	http.HandleFunc("/api/1/list", listHandler(rootPath))
+	http.HandleFunc("/api/1/login", loginHandler(manager, store))
+	http.HandleFunc("/api/1/list", listHandler(manager))
 	http.HandleFunc("/api/1/sync", syncHandler)
 
 	err := http.ListenAndServe(":8080", nil)
@@ -41,6 +59,8 @@ func main() {
 	}
 }
 
+const rootPathCookieName = "rootPath"
+
 func rootHandler(staticDir string) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fullPath := staticDir + "/" + r.URL.Path[1:]
@@ -48,8 +68,50 @@ func rootHandler(staticDir string) func(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-func listHandler(rootPath string) func(w http.ResponseWriter, r *http.Request) {
+func loginHandler(sessionManager *scs.Manager, store user.Store) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		err := r.ParseForm()
+		if err != nil {
+			panic(err)
+		}
+
+		username := r.PostFormValue("username")
+		password := r.PostFormValue("password")
+		u, err := store.Login(username, password)
+		if err != nil {
+			// User failed to login, send a 401
+			http.Error(w, "Failed to login.", 401)
+			return
+		}
+
+		// Put the user's path in the cookie, login succeeded
+		session := sessionManager.Load(r)
+		err = session.PutString(w, rootPathCookieName, u.Path())
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		// Login succeeded, redirect to root
+		http.Redirect(w, r, "/", 303)
+	}
+}
+
+func listHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		session := sessionManager.Load(r)
+
+		rootPath, err := session.GetString(rootPathCookieName)
+		if err != nil {
+			panic(err)
+		}
+		if len(rootPath) == 0 {
+			// User needs to login
+			http.Redirect(w, r, "/login.html", 302)
+			// TODO: Consider returning something in JSON here anyway that indicates where to redirect to
+			// server-side rather than in the index file.
+			return
+		}
+
 		db := storage.NewDB(rootPath)
 		files, err := db.AllFiles()
 		if err != nil {

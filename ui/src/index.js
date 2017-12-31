@@ -8,4 +8,6 @@ import App from './App';
 
 $.getJSON('/api/1/list', (data) => {
     ReactDOM.render(<App rootFolderList={data}/>, document.getElementById('root'));
+}).fail(function() {
+    window.location.replace("/login.html")
 });

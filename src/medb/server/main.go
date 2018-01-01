@@ -179,6 +179,14 @@ func saveHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *htt
 		if len(filename) == 0 {
 			http.Error(w, "Invalid filename", 400)
 		}
+
+		// Pull first to minimize the chance of a conflict
+		err = db.Pull()
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
 		p := path.Join("unfiled", filename)
 		err = db.NewFile(p, content)
 		if err != nil {

@@ -19,7 +19,7 @@ function render() {
                                     return <div key={i} className="app-foldercontainer-0">
                                         <div className="app-0-0-0-0-1-0-0-0-0">
                                             <div className="app-folderelement-0">
-                                                <Folderlistelement state={elem.state} name={elem.name} contents={elem.contents} /> 
+                                                <Folderlistelement state={elem.state} name={elem.name} contents={elem.contents} handleExpand={this.props.handleExpand} /> 
                                             </div>
                                         </div>
                                     </div>;

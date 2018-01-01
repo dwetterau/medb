@@ -9,7 +9,7 @@ function render() {
             <div className="folderlist-folderlist-3">
                 <div className="folderlist-0-0-0">
                     <div className="folderlist-containinginstance-8">
-                        <Folderlistelement state={"expandedEmpty"} name={this.props.name} contents={[]} /> 
+                        <Folderlistelement state={"expandedEmpty"} name={this.props.name} contents={[]} handleExpand={this.props.handleExpand} /> 
                     </div>
                 </div>
                 <div className="folderlist-0-0-1">
@@ -18,7 +18,7 @@ function render() {
                             return <div key={i} className="folderlist-nestedinstancecontainer-5">
                                 <div className="folderlist-0-0-1-0-0-0-0">
                                     <div className="folderlist-nestedinstance-7">
-                                        <Folderlistelement state={content.state} name={content.name} contents={content.contents} /> 
+                                        <Folderlistelement state={content.state} name={content.name} contents={content.contents} handleExpand={this.props.handleExpand} /> 
                                     </div>
                                 </div>
                             </div>;

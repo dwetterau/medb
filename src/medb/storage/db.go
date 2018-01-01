@@ -183,6 +183,7 @@ func (d dbImpl) AsJSON() ([]*JSONFile, error) {
 			}
 			if componentIndex == len(pathStrings)-1 {
 				cur.Contents[foundIndex].Id = file.ID()
+				cur.Contents[foundIndex].State = "file"
 			}
 			// Move down the tree
 			cur = cur.Contents[foundIndex]

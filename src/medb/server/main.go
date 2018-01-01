@@ -19,10 +19,12 @@ func main() {
 	var staticDir string
 	var userFilePath string
 	var sessionSecret string
+	port := 3000
 
 	flag.StringVar(&staticDir, "static", staticDir, "path to the static dir for the ui")
 	flag.StringVar(&userFilePath, "usersFilePath", userFilePath, "path to the file with user information")
 	flag.StringVar(&sessionSecret, "sessionSecret", sessionSecret, "32 char random string to use for the sessions")
+	flag.IntVar(&port, "port", port, "The port to listen on")
 	flag.Parse()
 
 	if staticDir == "" {
@@ -53,7 +55,7 @@ func main() {
 	http.HandleFunc("/api/1/list", listHandler(manager))
 	http.HandleFunc("/api/1/sync", syncHandler)
 
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	if err != nil {
 		panic(err)
 	}
@@ -72,7 +74,8 @@ func loginHandler(sessionManager *scs.Manager, store user.Store) func(w http.Res
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := r.ParseForm()
 		if err != nil {
-			panic(err)
+			http.Error(w, "Failed to parse form.", 400)
+			return
 		}
 
 		username := r.PostFormValue("username")
@@ -102,7 +105,8 @@ func listHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *htt
 
 		rootPath, err := session.GetString(rootPathCookieName)
 		if err != nil {
-			panic(err)
+			http.Error(w, err.Error(), 500)
+			return
 		}
 		if len(rootPath) == 0 {
 			// User needs to login
@@ -115,14 +119,16 @@ func listHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *htt
 		db := storage.NewDB(rootPath)
 		files, err := db.AllFiles()
 		if err != nil {
-			panic(err)
+			http.Error(w, err.Error(), 500)
+			return
 		}
 
 		filesAsJSON := convertToJSON(rootPath, files)
 
 		raw, err := json.Marshal(filesAsJSON)
 		if err != nil {
-			panic(err)
+			http.Error(w, err.Error(), 500)
+			return
 		}
 		fmt.Fprint(w, string(raw))
 	}
@@ -196,4 +202,5 @@ func convertToJSON(rootPath string, files []storage.File) []*jsonFile {
 
 func syncHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: Print the synced status
+	http.Error(w, "not implemented", 500)
 }

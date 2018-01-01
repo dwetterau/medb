@@ -4,8 +4,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"os"
-	"os/exec"
 	"time"
 
 	"github.com/google/uuid"
@@ -57,7 +55,7 @@ func main() {
 		}
 	}
 	// Step 4: Create a new git commit with all the changes + all new files
-	committed, err := commitToGIT(rootPath, fmt.Sprintf("MeDB Sync - %v", time.Now().Unix()))
+	committed, err := db.CommitToGIT(fmt.Sprintf("MeDB Sync - %v", time.Now().Unix()))
 	if err != nil {
 		panic(err)
 	}
@@ -70,62 +68,8 @@ func main() {
 
 	// Step 5: Rebase on new changes?
 	// Step 6: Push out changes
-	err = pushToRemote(rootPath)
+	err = db.Push()
 	if err != nil {
 		panic(err)
 	}
-}
-
-// Returns true if a new commit was made, false otherwise
-func commitToGIT(rootPath string, message string) (bool, error) {
-	curDir, err := os.Getwd()
-	if err != nil {
-		return false, err
-	}
-	defer os.Chdir(curDir)
-
-	err = os.Chdir(rootPath)
-	if err != nil {
-		return false, err
-	}
-	cmd := exec.Command("git", "add", "-A")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	if err != nil {
-		return false, err
-	}
-
-	// See if there's anything to commit
-	cmd = exec.Command("git", "diff-index", "--quiet", "HEAD")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	if err == nil {
-		// Nothing to commit, return!
-		return false, nil
-	}
-
-	// Now commit everything
-	cmd = exec.Command("git", "commit", "-am", message)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return true, cmd.Run()
-}
-
-func pushToRemote(rootPath string) error {
-	curDir, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-	defer os.Chdir(curDir)
-
-	err = os.Chdir(rootPath)
-	if err != nil {
-		return err
-	}
-	cmd := exec.Command("git", "push")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
 }

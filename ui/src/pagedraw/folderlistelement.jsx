@@ -26,7 +26,7 @@ function render() {
                             <div className="folderlistelement-name-1">
                                 { this.props.name }
                             </div>
-                            <div className="folderlistelement-plus-4">[+]</div>
+                            <div className="folderlistelement-plus-4">{"[+]"}</div>
                         </div>
                     </div>
                 </div>
@@ -40,7 +40,7 @@ function render() {
                             <div className="folderlistelement-name-5">
                                 { this.props.name }
                             </div>
-                            <div className="folderlistelement-minus-4">[open]</div>
+                            <div className="folderlistelement-minus-4">{"[open]"}</div>
                         </div>
                     </div>
                 </div>
@@ -54,7 +54,7 @@ function render() {
                             <div className="folderlistelement-name-13">
                                 { this.props.name }
                             </div>
-                            <div className="folderlistelement-minus-42">[-]</div>
+                            <div className="folderlistelement-minus-42">{"[-]"}</div>
                         </div>
                     </div>
                 </div>

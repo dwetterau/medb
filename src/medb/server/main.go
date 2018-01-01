@@ -6,13 +6,11 @@ import (
 	"fmt"
 	"medb/storage"
 	"net/http"
-	"sort"
-	"strings"
+	"path"
 
 	"medb/server/user"
 
 	"github.com/alexedwards/scs"
-	"github.com/google/uuid"
 )
 
 func main() {
@@ -53,7 +51,8 @@ func main() {
 	// API v1
 	http.HandleFunc("/api/1/login", loginHandler(manager, store))
 	http.HandleFunc("/api/1/list", listHandler(manager))
-	http.HandleFunc("/api/1/sync", syncHandler)
+	http.HandleFunc("/api/1/sync/pull", syncPullHandler(manager))
+	http.HandleFunc("/api/1/save", saveHandler(manager))
 
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	if err != nil {
@@ -61,7 +60,10 @@ func main() {
 	}
 }
 
-const rootPathCookieName = "rootPath"
+const (
+	rootPathCookieName = "rootPath"
+	successJSON        = "{success: true}"
+)
 
 func rootHandler(staticDir string) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -99,31 +101,38 @@ func loginHandler(sessionManager *scs.Manager, store user.Store) func(w http.Res
 	}
 }
 
+func getDB(w http.ResponseWriter, r *http.Request, sessionManager *scs.Manager) storage.DB {
+	session := sessionManager.Load(r)
+
+	rootPath, err := session.GetString(rootPathCookieName)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return nil
+	}
+	if len(rootPath) == 0 {
+		// User needs to login
+		http.Redirect(w, r, "/login.html", 302)
+		// TODO: Consider returning something in JSON here anyway that indicates where to redirect to
+		// server-side rather than in the index file.
+		return nil
+	}
+
+	return storage.NewDB(rootPath)
+}
+
 func listHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		session := sessionManager.Load(r)
+		db := getDB(w, r, sessionManager)
+		if db == nil {
+			// This doesn't write an error because we already did that
+			return
+		}
 
-		rootPath, err := session.GetString(rootPathCookieName)
+		filesAsJSON, err := db.AsJSON()
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return
 		}
-		if len(rootPath) == 0 {
-			// User needs to login
-			http.Redirect(w, r, "/login.html", 302)
-			// TODO: Consider returning something in JSON here anyway that indicates where to redirect to
-			// server-side rather than in the index file.
-			return
-		}
-
-		db := storage.NewDB(rootPath)
-		files, err := db.AllFiles()
-		if err != nil {
-			http.Error(w, err.Error(), 500)
-			return
-		}
-
-		filesAsJSON := convertToJSON(rootPath, files)
 
 		raw, err := json.Marshal(filesAsJSON)
 		if err != nil {
@@ -134,73 +143,60 @@ func listHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *htt
 	}
 }
 
-type jsonFile struct {
-	Name     string      `json:"name""`
-	State    string      `json:"state"`
-	Contents []*jsonFile `json:"contents"`
-	Id       uuid.UUID   `json:"id"`
+func syncPullHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		db := getDB(w, r, sessionManager)
+		if db == nil {
+			// This doesn't write an error because we already did that
+			return
+		}
+		err := db.Pull()
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		fmt.Fprint(w, successJSON)
+	}
 }
 
-func convertToJSON(rootPath string, files []storage.File) []*jsonFile {
-	// Sort shortest paths first to keep things stable
-	sort.Slice(files, func(i, j int) bool {
-		p1 := files[i].Path()
-		p2 := files[j].Path()
-		if len(p1) != len(p2) {
-			return len(p1) < len(p2)
+func saveHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		db := getDB(w, r, sessionManager)
+		if db == nil {
+			// This doesn't write an error because we already did that
+			return
 		}
-		return strings.Compare(p1, p2) < 0
-	})
-	tree := &jsonFile{}
 
-	for _, file := range files {
-		cur := tree
-		path := file.Path()[len(rootPath):]
-		pathStrings := strings.Split(path, "/")
-		for componentIndex, component := range pathStrings {
-			if component == "" {
-				continue
-			}
-			foundIndex := -1
-			for i, val := range cur.Contents {
-				if val.Name == component {
-					foundIndex = i
-					break
-				}
-			}
-			if foundIndex == -1 {
-				cur.Contents = append(
-					cur.Contents,
-					&jsonFile{Name: component},
-				)
-				foundIndex = len(cur.Contents) - 1
-			}
-			if componentIndex == len(pathStrings)-1 {
-				cur.Contents[foundIndex].Id = file.ID()
-			}
-			// Move down the tree
-			cur = cur.Contents[foundIndex]
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, "Failed to parse form.", 400)
+			return
 		}
+
+		filename := r.PostFormValue("filename")
+		content := r.PostFormValue("content")
+
+		if len(filename) == 0 {
+			http.Error(w, "Invalid filename", 400)
+		}
+		p := path.Join("unfiled", filename)
+		err = db.NewFile(p, content)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
+		_, err = db.CommitToGIT(fmt.Sprintf("MeDB Sync - saving unfiled note %s", filename))
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		err = db.Push()
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
+		fmt.Fprint(w, successJSON)
 	}
-	toProcess := []*jsonFile{tree}
-	for len(toProcess) > 0 {
-		cur := toProcess[len(toProcess)-1]
-		toProcess = toProcess[:len(toProcess)-1]
-
-		if len(cur.Contents) > 0 {
-			cur.State = "expanded"
-		} else {
-			cur.State = "collapsed"
-		}
-		for _, c := range cur.Contents {
-			toProcess = append(toProcess, c)
-		}
-	}
-
-	return tree.Contents
-}
-
-func syncHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO: Print the synced status
-	http.Error(w, "not implemented", 500)
 }

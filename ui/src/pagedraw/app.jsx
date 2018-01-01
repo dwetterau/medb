@@ -28,7 +28,7 @@ function render() {
                         </div>
                     </div>
                     <div className="app-createnote_instance-3">
-                        <Createnote /> 
+                        <Createnote content={this.props.content} filename={this.props.filename} handleContentChange={this.props.handleContentChange} handleFilenameChange={this.props.handleFilenameChange} handleSaveNote={this.props.handleSaveNote} /> 
                     </div>
                 </div>
                 <div className="app-0-0-1">

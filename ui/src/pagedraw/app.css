@@ -43,43 +43,32 @@
 .app-0-0-1-0 {
     display: flex;
     flex-direction: column;
-    padding-top: 54px;
-    padding-bottom: 137px;
+    padding-top: 15px;
+    padding-bottom: 118px;
 }
 
-.app-foldercontainer-0 {
+.app-0-0-1-0-0 {
+    display: flex;
+}
+
+.app-savebutton-1 {
     display: flex;
     flex-direction: column;
-    box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.5);
+    padding-top: 9px;
+    padding-bottom: 9px;
+    border-radius: 1px;
+    cursor: pointer;
     background: rgb(255, 255, 255);
-    flex-grow: 1;
+    border: 1px solid rgba(0, 0, 0, 0.5);
 }
 
 .app-0-0-1-0-0-0-0 {
     display: flex;
+    padding-left: 138px;
+    padding-right: 137px;
 }
 
-.app-folderelement-0 {
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.app-createnote_instance-3 {
-    flex-shrink: 0;
-    margin-left: 251px;
-    display: flex;
-    flex-direction: column;
-}
-
-.app-0-0-2 {
-    display: flex;
-    margin-top: 155px;
-    padding-left: 592px;
-    padding-right: 276px;
-}
-
-.app-syncbutton-4 {
+.app-pull-5 {
     width: 37px;
     flex-shrink: 0;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -94,7 +83,43 @@
     word-wrap: break-word;
 }
 
-.app-0-0-3 {
+.app-0-0-1-0-1 {
+    display: flex;
+    margin-top: 22px;
+    padding-right: 157px;
+}
+
+.app-0-0-1-0-1-0 {
+    display: flex;
+    flex-direction: column;
+}
+
+.app-foldercontainer-0 {
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.5);
+    background: rgb(255, 255, 255);
+    flex-grow: 1;
+}
+
+.app-0-0-1-0-1-0-0-0-0 {
+    display: flex;
+}
+
+.app-folderelement-0 {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-createnote_instance-3 {
+    flex-shrink: 0;
+    margin-left: 94px;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-0-0-2 {
     width: 0px;
     flex-grow: 1;
     flex-basis: 0px;

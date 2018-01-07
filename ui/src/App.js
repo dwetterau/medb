@@ -36,6 +36,12 @@ class App extends Component {
       })
   }
 
+  handlePull() {
+      $.get("/api/1/pull", () => {
+          window.location = "/"
+      })
+  }
+
   handleExpand(e) {
       let cur = e.target.parentElement;
       let path = "";
@@ -103,6 +109,7 @@ class App extends Component {
           handleContentChange={this.handleContentChange.bind(this)}
           handleSaveNote={this.handleSaveNote.bind(this)}
           handleExpand={this.handleExpand.bind(this)}
+          handlePull={this.handlePull}
         />
     );
   }

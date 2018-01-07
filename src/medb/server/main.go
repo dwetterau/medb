@@ -53,7 +53,7 @@ func main() {
 	// API v1
 	http.HandleFunc("/api/1/login", loginHandler(manager, store))
 	http.HandleFunc("/api/1/list", listHandler(manager))
-	http.HandleFunc("/api/1/sync/pull", syncPullHandler(manager))
+	http.HandleFunc("/api/1/pull", pullHandler(manager))
 	http.HandleFunc("/api/1/save", saveHandler(manager))
 	http.HandleFunc("/api/1/edit", editHandler(manager))
 	http.HandleFunc("/api/1/load", loadHandler(manager))
@@ -153,7 +153,7 @@ func listHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *htt
 	}
 }
 
-func syncPullHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *http.Request) {
+func pullHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		db := getDB(w, r, sessionManager)
 		if db == nil {

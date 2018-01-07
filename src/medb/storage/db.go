@@ -24,6 +24,7 @@ type DB interface {
 	AllFiles() ([]File, error)
 	AsJSON() ([]*JSONFile, error)
 	SaveFile(File) error
+	LoadFile(fileID uuid.UUID) (File, error)
 	NewFile(path string, content string) error
 	CommitToGIT(message string) (bool, error)
 	Push() error
@@ -209,6 +210,20 @@ func (d dbImpl) SaveFile(fileToSave File) error {
 	}
 
 	return ioutil.WriteFile(f.currentLocation, []byte(f.generateHeader()+f.content), 0644)
+}
+
+func (d dbImpl) LoadFile(fileID uuid.UUID) (File, error) {
+	allFiles, err := d.AllFiles()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, f := range allFiles {
+		if f.ID() == fileID {
+			return f, nil
+		}
+	}
+	return nil, errors.New("file doesn't exist")
 }
 
 func (d dbImpl) NewFile(desiredPath string, content string) error {

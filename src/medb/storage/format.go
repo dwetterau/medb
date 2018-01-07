@@ -38,6 +38,8 @@ type File interface {
 	ID() uuid.UUID
 	Name() string
 	Path() string
+	Content() string
+	Update(newContent string)
 }
 
 type fileImpl struct {
@@ -85,6 +87,10 @@ func (f *fileImpl) Name() string {
 
 func (f *fileImpl) Path() string {
 	return f.currentLocation
+}
+
+func (f *fileImpl) Content() string {
+	return f.content
 }
 
 func (f *fileImpl) generateHeader() string {
@@ -162,4 +168,8 @@ func parseFile(input string) (*fileImpl, error) {
 		},
 		content: actualContent,
 	}, nil
+}
+
+func (f *fileImpl) Update(newContent string) {
+	f.content = newContent
 }

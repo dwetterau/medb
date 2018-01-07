@@ -11,6 +11,7 @@ import (
 	"medb/server/user"
 
 	"github.com/alexedwards/scs"
+	"github.com/google/uuid"
 )
 
 func main() {
@@ -39,6 +40,7 @@ func main() {
 
 	http.Handle("/static/", staticServer)
 	http.HandleFunc("/", rootHandler(staticDir))
+	http.HandleFunc("/edit/", editPageHandler(staticDir))
 
 	// Session manager setup
 	manager := scs.NewCookieManager(sessionSecret)
@@ -53,6 +55,8 @@ func main() {
 	http.HandleFunc("/api/1/list", listHandler(manager))
 	http.HandleFunc("/api/1/sync/pull", syncPullHandler(manager))
 	http.HandleFunc("/api/1/save", saveHandler(manager))
+	http.HandleFunc("/api/1/edit", editHandler(manager))
+	http.HandleFunc("/api/1/load", loadHandler(manager))
 
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	if err != nil {
@@ -69,6 +73,12 @@ func rootHandler(staticDir string) func(w http.ResponseWriter, r *http.Request) 
 	return func(w http.ResponseWriter, r *http.Request) {
 		fullPath := staticDir + "/" + r.URL.Path[1:]
 		http.ServeFile(w, r, fullPath)
+	}
+}
+
+func editPageHandler(staticDir string) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, staticDir+"/index.html")
 	}
 }
 
@@ -195,6 +205,106 @@ func saveHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *htt
 		}
 
 		_, err = db.CommitToGIT(fmt.Sprintf("MeDB Sync - saving unfiled note %s", filename))
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		err = db.Push()
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
+		fmt.Fprint(w, successJSON)
+	}
+}
+
+func loadHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		db := getDB(w, r, sessionManager)
+		if db == nil {
+			// This doesn't write an error because we already did that
+			return
+		}
+
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, "Failed to parse form.", 400)
+			return
+		}
+
+		fileIDRaw := r.PostFormValue("fileID")
+		fileID, err := uuid.Parse(fileIDRaw)
+		if err != nil {
+			http.Error(w, "unable to parse fileid", 400)
+			return
+		}
+		f, err := db.LoadFile(fileID)
+		if err != nil {
+			http.Error(w, err.Error(), 404)
+			return
+		}
+
+		fileAsJSON := struct {
+			Id      string `json:"id"`
+			Name    string `json:"name"`
+			Content string `json:"content"`
+		}{
+			Id:      f.ID().String(),
+			Name:    f.Name(),
+			Content: f.Content(),
+		}
+		raw, err := json.Marshal(fileAsJSON)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		fmt.Fprint(w, string(raw))
+	}
+}
+
+func editHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		db := getDB(w, r, sessionManager)
+		if db == nil {
+			// This doesn't write an error because we already did that
+			return
+		}
+
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, "Failed to parse form.", 400)
+			return
+		}
+
+		// Pull first to minimize the chance of a conflict
+		err = db.Pull()
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
+		fileIDRaw := r.PostFormValue("fileID")
+		content := r.PostFormValue("fileContent")
+
+		fileID, err := uuid.Parse(fileIDRaw)
+		if err != nil {
+			http.Error(w, "unable to parse fileid", 400)
+			return
+		}
+		f, err := db.LoadFile(fileID)
+		if err != nil {
+			http.Error(w, err.Error(), 404)
+			return
+		}
+		f.Update(content)
+		err = db.SaveFile(f)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
+		_, err = db.CommitToGIT(fmt.Sprintf("MeDB Sync - saving updated file %s", f.ID()))
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return

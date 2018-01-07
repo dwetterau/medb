@@ -79,8 +79,8 @@ class App extends Component {
           }
       }
       if (curNode.state === "file") {
-          // TODO: Open the file?
-          console.log("Opening file...", curNode.name)
+          // Open the file by navigating to the edit page for it.
+          window.location = "/edit/" + curNode.id
       } else if (curNode.state === "expanded" || curNode.state === "expandedEmpty") {
           curNode.state = "collapsed"
       } else if (curNode.state === "collapsed") {

@@ -7,19 +7,15 @@ function render() {
         <div className="collapsed-0">
             <div className="collapsed-collapsed-4">
                 <div className="collapsed-0-0-0">
-                    <div className="collapsed-rectangle_4">
+                    <div className="collapsed-rectangle_2">
                         <div className="collapsed-0-0-0-0-0">
-                            <div className="collapsed-rectangle_2">
-                                <div className="collapsed-0-0-0-0-0-0-0">
-                                    <div className="collapsed-name-1">{ this.props.name }</div>
-                                </div>
-                            </div>
-                            <div className="collapsed-rectangle_3">
-                                <div className="collapsed-0-0-0-0-0-1-0">
-                                    <div onClick={this.props.handleExpand} className="collapsed-plus-4">
-                                        {"[+]"}
-                                    </div>
-                                </div>
+                            <div className="collapsed-name-1">{ this.props.name }</div>
+                        </div>
+                    </div>
+                    <div className="collapsed-rectangle_3">
+                        <div className="collapsed-0-0-0-1-0">
+                            <div onClick={this.props.handleExpand} className="collapsed-plus-4">
+                                {"[+]"}
                             </div>
                         </div>
                     </div>

@@ -9,7 +9,7 @@ import EditFile from './Edit';
 let mockID = "00000000-0000-0000-0000-000000000000";
 let mockRootFolderList = [
     {name: "folder 1", state: "expanded", contents: [
-            {name: "file1.txt", state: "file", id: mockID, contents: []},
+            {name: "filename-long.txt", state: "file", id: mockID, contents: []},
         ]
     },
     {name: "folder 2", state: "expanded", contents: [

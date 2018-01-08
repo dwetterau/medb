@@ -7,19 +7,14 @@ function render() {
         <div className="createnote-0">
             <div className="createnote-createnote-3">
                 <div className="createnote-0-0-0">
-                    <div className="createnote-notedescription-2">
-                        Create a quick note
-                    </div>
-                </div>
-                <div className="createnote-0-0-1">
                     <input type="text" placeholder="Filename" value={this.props.filename} onChange={this.props.handleFilenameChange} className="createnote-filenameinput-7" /> 
                 </div>
-                <div className="createnote-0-0-2">
+                <div className="createnote-0-0-1">
                     <textarea placeholder="Enter text..." value={this.props.content} onChange={this.props.handleContentChange} className="createnote-contentinput-1" /> 
                 </div>
-                <div className="createnote-0-0-3">
+                <div className="createnote-0-0-2">
                     <div onClick={this.props.handleSaveNote} className="createnote-savebutton-2">
-                        <div className="createnote-0-0-3-0-0">
+                        <div className="createnote-0-0-2-0-0">
                             <div className="createnote-text_3">Save</div>
                         </div>
                     </div>

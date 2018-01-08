@@ -14,33 +14,10 @@
 .createnote-createnote-3 {
     display: flex;
     flex-direction: column;
-    padding-top: 6px;
 }
 
 .createnote-0-0-0 {
     display: flex;
-    padding-left: 1px;
-    padding-right: 158px;
-}
-
-.createnote-notedescription-2 {
-    width: 157px;
-    flex-shrink: 0;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    color: #000000;
-    font-size: 14px;
-    line-height: normal;
-    letter-spacing: 0px;
-    font-weight: normal;
-    font-style: normal;
-    text-decoration: none;
-    text-align: left;
-    word-wrap: break-word;
-}
-
-.createnote-0-0-1 {
-    display: flex;
-    margin-top: 23px;
     padding-left: 3px;
 }
 
@@ -65,7 +42,7 @@
     border: 1px solid #cccccc;
 }
 
-.createnote-0-0-2 {
+.createnote-0-0-1 {
     display: flex;
     margin-top: 17px;
     padding-left: 3px;
@@ -92,7 +69,7 @@
     border: 1px solid #cccccc;
 }
 
-.createnote-0-0-3 {
+.createnote-0-0-2 {
     display: flex;
     margin-top: 36px;
     padding-left: 2px;
@@ -109,7 +86,7 @@
     border: 1px solid rgba(0, 0, 0, 0.5);
 }
 
-.createnote-0-0-3-0-0 {
+.createnote-0-0-2-0-0 {
     display: flex;
     padding-left: 138px;
     padding-right: 137px;

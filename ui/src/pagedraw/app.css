@@ -75,6 +75,7 @@
 
 .app-0-0-1-1-0-0-0-0-0 {
     display: flex;
+    padding-right: 186px;
 }
 
 .app-folderelement-0 {
@@ -85,7 +86,7 @@
 
 .app-createnote_instance-3 {
     flex-shrink: 0;
-    margin-left: 207px;
+    margin-left: 21px;
     display: flex;
     flex-direction: column;
 }

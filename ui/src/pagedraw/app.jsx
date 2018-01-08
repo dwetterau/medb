@@ -15,19 +15,13 @@ function render() {
                     </div>
                 </div>
                 <div className="app-0-0-1">
-                    <div className="app-0-0-1-0">
-                        <div className="app-0-0-1-0-0">
-                            <div onClick={this.props.handlePull} className="app-savebutton-1">
-                                <div className="app-0-0-1-0-0-0-0">
-                                    <div className="app-pull-5">Pull</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="app-0-0-1-0-1">
-                            <div className="app-0-0-1-0-1-0">
+                    <div className="app-0-0-1-0" /> 
+                    <div className="app-page-6">
+                        <div className="app-0-0-1-1-0">
+                            <div className="app-0-0-1-1-0-0">
                                 { this.props.rootFolderList.map((elem, i) => {
                                     return <div key={i} className="app-foldercontainer-0">
-                                        <div className="app-0-0-1-0-1-0-0-0-0">
+                                        <div className="app-0-0-1-1-0-0-0-0-0">
                                             <div className="app-folderelement-0">
                                                 <Folderlistelement state={elem.state} name={elem.name} contents={elem.contents} handleExpand={this.props.handleExpand} /> 
                                             </div>
@@ -35,13 +29,21 @@ function render() {
                                     </div>;
                                 }) }
                             </div>
+                            <div className="app-createnote_instance-3">
+                                <Createnote content={this.props.content} filename={this.props.filename} handleContentChange={this.props.handleContentChange} handleFilenameChange={this.props.handleFilenameChange} handleSaveNote={this.props.handleSaveNote} /> 
+                            </div>
                         </div>
+                        <div className="app-0-0-1-1-1">
+                            <div onClick={this.props.handlePull} className="app-savebutton-1">
+                                <div className="app-0-0-1-1-1-0-0">
+                                    <div className="app-pull-5">Pull</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="app-0-0-1-1-2" /> 
                     </div>
-                    <div className="app-createnote_instance-3">
-                        <Createnote content={this.props.content} filename={this.props.filename} handleContentChange={this.props.handleContentChange} handleFilenameChange={this.props.handleFilenameChange} handleSaveNote={this.props.handleSaveNote} /> 
-                    </div>
+                    <div className="app-0-0-1-2" /> 
                 </div>
-                <div className="app-0-0-2" /> 
             </div>
         </div>
     </div>;

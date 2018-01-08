@@ -18,12 +18,12 @@
     flex-grow: 1;
     flex-basis: 0px;
     min-height: 100vh;
-    background: #FFFFFF;
+    background: rgb(246, 249, 252);
 }
 
 .editfile-0-0-0 {
     display: flex;
-    padding-left: 1px;
+    padding-right: 1px;
 }
 
 .editfile-titlebar_instance-5 {
@@ -34,19 +34,41 @@
 }
 
 .editfile-0-0-1 {
+    width: 0px;
+    flex-grow: 0;
+    flex-basis: 0px;
+}
+
+.editfile-0-0-2 {
     display: flex;
-    margin-top: 6px;
-    padding-left: 20px;
-    padding-right: 246px;
+    flex-grow: 1;
+    flex-basis: 0px;
+    min-height: fit-content;
+    justify-content: center;
+}
+
+.editfile-page-1 {
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    padding-bottom: 173px;
+    background: rgb(255, 255, 255);
+    min-height: 100vh;
+}
+
+.editfile-0-0-2-0-0 {
+    display: flex;
+    padding-left: 16px;
+    padding-right: 536px;
 }
 
 .editfile-edittitle-3 {
-    width: 53px;
+    width: 60px;
     flex-shrink: 0;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     color: #000000;
-    font-size: 14px;
-    line-height: normal;
+    font-size: 18px;
+    line-height: 18px;
     letter-spacing: 0px;
     font-weight: normal;
     font-style: normal;
@@ -55,39 +77,15 @@
     word-wrap: break-word;
 }
 
-.editfile-0-0-1-1 {
+.editfile-0-0-2-0-0-1 {
     display: flex;
     flex-direction: column;
-    margin-left: 13px;
-    padding-bottom: 16px;
+    margin-left: 18px;
+    padding-top: 2px;
+    padding-bottom: 18px;
 }
 
-.editfile-0-0-1-1-0 {
-    display: flex;
-}
-
-.editfile-fileidentifier-8 {
-    width: 153px;
-    flex-shrink: 0;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    color: #000000;
-    font-size: 14px;
-    line-height: normal;
-    letter-spacing: 0px;
-    font-weight: normal;
-    font-style: normal;
-    text-decoration: none;
-    text-align: left;
-    word-wrap: break-word;
-}
-
-.editfile-0-0-1-2 {
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 16px;
-}
-
-.editfile-0-0-1-2-0 {
+.editfile-0-0-2-0-0-1-0 {
     display: flex;
 }
 
@@ -106,18 +104,42 @@
     word-wrap: break-word;
 }
 
-.editfile-0-0-2 {
+.editfile-0-0-2-0-1 {
     display: flex;
-    margin-top: 2px;
-    padding-left: 20px;
-    padding-right: 51px;
+    padding-left: 17px;
+    padding-right: 384px;
+}
+
+.editfile-fileidentifier-8 {
+    width: 367px;
+    flex-shrink: 0;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #000000;
+    font-size: 14px;
+    line-height: normal;
+    letter-spacing: 0px;
+    font-weight: normal;
+    font-style: normal;
+    text-decoration: none;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.editfile-0-0-2-0-2 {
+    display: flex;
+    flex-grow: 1;
+    flex-basis: 0px;
+    min-height: fit-content;
+    margin-top: 24px;
+    padding-left: 17px;
+    padding-right: 42px;
 }
 
 .editfile-editcontent-5 {
-    width: 552px;
-    height: 327px;
+    width: 709px;
     flex-shrink: 0;
-    border-radius: 4px;
+    border-radius: 1px;
+    box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.5);
     background: #FFFFFF;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     color: #000;
@@ -133,11 +155,11 @@
     border: 1px solid #cccccc;
 }
 
-.editfile-0-0-3 {
+.editfile-0-0-2-0-3 {
     display: flex;
-    margin-top: 13px;
-    padding-left: 20px;
-    padding-right: 289px;
+    margin-top: 20px;
+    padding-left: 17px;
+    padding-right: 437px;
 }
 
 .editfile-savebutton-8 {
@@ -151,7 +173,7 @@
     border: 1px solid rgba(0, 0, 0, 0.5);
 }
 
-.editfile-0-0-3-0-0 {
+.editfile-0-0-2-0-3-0-0 {
     display: flex;
     padding-left: 138px;
     padding-right: 137px;
@@ -170,12 +192,6 @@
     text-decoration: none;
     text-align: center;
     word-wrap: break-word;
-}
-
-.editfile-0-0-4 {
-    width: 0px;
-    flex-grow: 1;
-    flex-basis: 0px;
 }
 
 * {

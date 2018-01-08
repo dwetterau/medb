@@ -12,37 +12,39 @@ function render() {
                         <Titlebar /> 
                     </div>
                 </div>
-                <div className="editfile-0-0-1">
-                    <div className="editfile-edittitle-3">
-                        <div>Editing</div>
-                        <br/>
-                    </div>
-                    <div className="editfile-0-0-1-1">
-                        <div className="editfile-0-0-1-1-0">
+                <div className="editfile-0-0-1" /> 
+                <div className="editfile-0-0-2">
+                    <div className="editfile-page-1">
+                        <div className="editfile-0-0-2-0-0">
+                            <div className="editfile-edittitle-3">
+                                <div>Editing</div>
+                                <br/>
+                            </div>
+                            <div className="editfile-0-0-2-0-0-1">
+                                <div className="editfile-0-0-2-0-0-1-0">
+                                    <div className="editfile-filename-8">
+                                        { this.props.fileName }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="editfile-0-0-2-0-1">
                             <div className="editfile-fileidentifier-8">
                                 { this.props.fileID }
                             </div>
                         </div>
-                    </div>
-                    <div className="editfile-0-0-1-2">
-                        <div className="editfile-0-0-1-2-0">
-                            <div className="editfile-filename-8">
-                                { this.props.fileName }
+                        <div className="editfile-0-0-2-0-2">
+                            <textarea value={this.props.fileContent} onChange={this.props.handleContentChange} className="editfile-editcontent-5" /> 
+                        </div>
+                        <div className="editfile-0-0-2-0-3">
+                            <div onClick={this.props.handleSave} className="editfile-savebutton-8">
+                                <div className="editfile-0-0-2-0-3-0-0">
+                                    <div className="editfile-text_3">Save</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className="editfile-0-0-2">
-                    <textarea value={this.props.fileContent} onChange={this.props.handleContentChange} className="editfile-editcontent-5" /> 
-                </div>
-                <div className="editfile-0-0-3">
-                    <div onClick={this.props.handleSave} className="editfile-savebutton-8">
-                        <div className="editfile-0-0-3-0-0">
-                            <div className="editfile-text_3">Save</div>
-                        </div>
-                    </div>
-                </div>
-                <div className="editfile-0-0-4" /> 
             </div>
         </div>
     </div>;

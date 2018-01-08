@@ -10,8 +10,12 @@ function render() {
                 <div className="folderlistelement-0-0-0">
                     <div className="folderlistelement-expanded-3">
                         <div className="folderlistelement-0-0-0-0-0">
-                            <div className="folderlistelement-nestedlistelement-7">
-                                <Folderlist name={this.props.name} contents={this.props.contents} handleExpand={this.props.handleExpand} /> 
+                            <div className="folderlistelement-rectangle_7">
+                                <div className="folderlistelement-0-0-0-0-0-0-0">
+                                    <div className="folderlistelement-nestedlistelement-7">
+                                        <Folderlist name={this.props.name} contents={this.props.contents} handleExpand={this.props.handleExpand} /> 
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -23,11 +27,23 @@ function render() {
                 <div className="folderlistelement-1-0-0">
                     <div className="folderlistelement-collapsed-4">
                         <div className="folderlistelement-1-0-0-0-0">
-                            <div className="folderlistelement-name-1">
-                                { this.props.name }
-                            </div>
-                            <div onClick={this.props.handleExpand} className="folderlistelement-plus-4">
-                                {"[+]"}
+                            <div className="folderlistelement-rectangle_4">
+                                <div className="folderlistelement-1-0-0-0-0-0-0">
+                                    <div className="folderlistelement-rectangle_2">
+                                        <div className="folderlistelement-1-0-0-0-0-0-0-0-0">
+                                            <div className="folderlistelement-name-1">
+                                                { this.props.name }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="folderlistelement-rectangle_3">
+                                        <div className="folderlistelement-1-0-0-0-0-0-0-1-0">
+                                            <div onClick={this.props.handleExpand} className="folderlistelement-plus-4">
+                                                {"[+]"}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -39,11 +55,23 @@ function render() {
                 <div className="folderlistelement-2-0-0">
                     <div className="folderlistelement-file-3">
                         <div className="folderlistelement-2-0-0-0-0">
-                            <div className="folderlistelement-name-5">
-                                { this.props.name }
-                            </div>
-                            <div onClick={this.props.handleExpand} className="folderlistelement-minus-4">
-                                {"[open]"}
+                            <div className="folderlistelement-rectangle_6">
+                                <div className="folderlistelement-2-0-0-0-0-0-0">
+                                    <div className="folderlistelement-rectangle_2-5">
+                                        <div className="folderlistelement-2-0-0-0-0-0-0-0-0">
+                                            <div className="folderlistelement-name-5">
+                                                { this.props.name }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="folderlistelement-rectangle_3-2">
+                                        <div className="folderlistelement-2-0-0-0-0-0-0-1-0">
+                                            <div onClick={this.props.handleExpand} className="folderlistelement-minus-4">
+                                                {"[open]"}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -55,11 +83,23 @@ function render() {
                 <div className="folderlistelement-3-0-0">
                     <div className="folderlistelement-expandedempty-0">
                         <div className="folderlistelement-3-0-0-0-0">
-                            <div className="folderlistelement-name-13">
-                                { this.props.name }
-                            </div>
-                            <div onClick={this.props.handleExpand} className="folderlistelement-minus-42">
-                                {"[-]"}
+                            <div className="folderlistelement-rectangle_5">
+                                <div className="folderlistelement-3-0-0-0-0-0-0">
+                                    <div className="folderlistelement-rectangle_2-1">
+                                        <div className="folderlistelement-3-0-0-0-0-0-0-0-0">
+                                            <div className="folderlistelement-name-3">
+                                                { this.props.name }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="folderlistelement-rectangle_3-6">
+                                        <div className="folderlistelement-3-0-0-0-0-0-0-1-0">
+                                            <div onClick={this.props.handleExpand} className="folderlistelement-minus-42">
+                                                {"[-]"}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

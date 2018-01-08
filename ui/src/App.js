@@ -50,9 +50,10 @@ class App extends Component {
       let last = null;
       while (cur.className.indexOf("folderlist") === 0) {
           // This will handle the base case
-          if (cur.children[0].className.indexOf("folderlistelement-name") === 0) {
-              path = "/" + cur.children[0].innerText + path;
-              last = cur.children[0];
+          let possibleName = cur.parentElement.parentElement.children[0].children[0].children[0];
+          if (possibleName.className.indexOf("folderlistelement-name") === 0) {
+              path = "/" + possibleName.innerText + path;
+              last = possibleName;
           } else if (cur.children[0].className.indexOf("folderlist-folderlist") === 0) {
               // This will extract names out of containing folderlists
               let child = cur;
@@ -67,7 +68,7 @@ class App extends Component {
 
           cur = cur.parentElement
       }
-
+      console.log("Clicked on ", path);
       let pathParts = path.split("/");
       let curNode = {contents: this.state.rootFolderList};
       for (let i = 1; i < pathParts.length; i++) {

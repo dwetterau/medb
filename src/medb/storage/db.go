@@ -9,6 +9,8 @@ import (
 	"sort"
 	"strings"
 
+	"time"
+
 	"github.com/google/uuid"
 )
 
@@ -23,6 +25,7 @@ var blacklistedFileNames = map[string]struct{}{
 type DB interface {
 	AllFiles() ([]File, error)
 	AsJSON() ([]*JSONFile, error)
+	Search(query string, options SearchOptions) ([]File, error)
 	SaveFile(File) error
 	LoadFile(fileID uuid.UUID) (File, error)
 	NewFile(path string, content string) error
@@ -40,6 +43,10 @@ type JSONFile struct {
 	State    string      `json:"state"`
 	Contents []*JSONFile `json:"contents"`
 	Id       uuid.UUID   `json:"id"`
+}
+
+type SearchOptions struct {
+	Limit int
 }
 
 type dbImpl struct {
@@ -201,6 +208,59 @@ func (d dbImpl) AsJSON() ([]*JSONFile, error) {
 	}
 
 	return tree.Contents, nil
+}
+
+func (d dbImpl) Search(query string, options SearchOptions) ([]File, error) {
+	files, err := d.AllFiles()
+	if err != nil {
+		return nil, err
+	}
+
+	type rankInfo struct {
+		matchType    int
+		creationTime time.Time
+		index        int
+	}
+
+	results := make([]rankInfo, 0)
+	for i, file := range files {
+		f := file.(*fileImpl)
+		lQuery := strings.ToLower(query)
+		if strings.Contains(strings.ToLower(f.Name()), lQuery) {
+			results = append(results, rankInfo{
+				1,
+				f.header.creationTS,
+				i,
+			})
+			continue
+		}
+
+		// TODO: Don't search binary files!
+
+		if strings.Contains(strings.ToLower(f.Content()), lQuery) {
+			results = append(results, rankInfo{
+				2,
+				f.header.creationTS,
+				i,
+			})
+		}
+	}
+
+	// Sort the results
+	sort.Slice(results, func(i, j int) bool {
+		if results[i].matchType == results[j].matchType {
+			// Sort by creation time (newest first)
+			return results[i].creationTime.After(results[j].creationTime)
+		}
+		return results[i].matchType < results[j].matchType
+	})
+
+	// Return the top limit results
+	filesToReturn := make([]File, 0, options.Limit)
+	for i := 0; i < options.Limit && i < len(results); i++ {
+		filesToReturn = append(filesToReturn, files[results[i].index])
+	}
+	return filesToReturn, nil
 }
 
 func (d dbImpl) SaveFile(fileToSave File) error {

@@ -3,19 +3,20 @@ import PagedrawGeneratedPage from './pagedraw/app'
 import $ from 'jquery';
 
 class App extends Component {
-  constructor(props) {
+  constructor() {
       super();
       this.state = {
           filename: "",
           content: "",
-          rootFolderList: props.rootFolderList,
+          searchResultList: [],
       }
   }
 
   handleFilenameChange(e) {
        this.setState({
-          filename: e.target.value,
-          content: this.state.content,
+           filename: e.target.value,
+           content: this.state.content,
+           searchResultList: this.state.searchResultList,
       })
   }
 
@@ -23,6 +24,7 @@ class App extends Component {
       this.setState({
           filename: this.state.filename,
           content: e.target.value,
+          searchResultList: this.state.searchResultList,
       })
   }
 
@@ -39,6 +41,19 @@ class App extends Component {
   handlePull() {
       $.get("/api/1/pull", () => {
           window.location = "/"
+      })
+  }
+
+  handleSearchQueryChange(e) {
+      // TODO: Debounce?
+      $.post("/api/1/search", {
+          query: e.target.value,
+      }).done((data) => {
+          this.setState({
+              filename: this.state.filename,
+              content: this.state.content,
+              searchResultList: JSON.parse(data),
+          })
       })
   }
 
@@ -70,7 +85,9 @@ class App extends Component {
       }
       console.log("Clicked on ", path);
       let pathParts = path.split("/");
-      let curNode = {contents: this.state.rootFolderList};
+      // TODO: Remove this horrible hack and instead let there be two handle functions separately
+      // for search results / root folder list
+      let curNode = {contents: this.props.rootFolderList.concat(this.state.searchResultList)};
       for (let i = 1; i < pathParts.length; i++) {
           let target = pathParts[i];
           let found = false;
@@ -103,9 +120,11 @@ class App extends Component {
   render() {
     return (
         <PagedrawGeneratedPage
-          rootFolderList={this.state.rootFolderList}
+          rootFolderList={this.props.rootFolderList}
           filename={this.state.filename}
           content={this.state.content}
+          searchResultList={this.state.searchResultList}
+          handleSearchQueryChange={this.handleSearchQueryChange.bind(this)}
           handleFilenameChange={this.handleFilenameChange.bind(this)}
           handleContentChange={this.handleContentChange.bind(this)}
           handleSaveNote={this.handleSaveNote.bind(this)}

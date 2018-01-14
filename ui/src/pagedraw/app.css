@@ -55,7 +55,7 @@
     display: flex;
     flex-direction: column;
     padding-top: 20px;
-    padding-bottom: 620px;
+    padding-bottom: 495px;
     background: rgb(255, 255, 255);
 }
 
@@ -83,11 +83,25 @@
 .app-0-0-1-0-0-0-1 {
     display: flex;
     margin-top: 27px;
-    padding-left: 61px;
-    padding-right: 60px;
+    padding-left: 27px;
+    padding-right: 27px;
 }
 
-.app-0-0-1-0-0-0-1-0 {
+.app-search_instance-5 {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 111px;
+}
+
+.app-0-0-1-0-0-0-2 {
+    display: flex;
+    margin-top: 14px;
+    padding-left: 42px;
+    padding-right: 79px;
+}
+
+.app-0-0-1-0-0-0-2-0 {
     display: flex;
     flex-direction: column;
 }
@@ -100,7 +114,7 @@
     flex-grow: 1;
 }
 
-.app-0-0-1-0-0-0-1-0-0-0-0 {
+.app-0-0-1-0-0-0-2-0-0-0-0 {
     display: flex;
 }
 

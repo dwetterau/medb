@@ -10,6 +10,8 @@ import (
 
 	"medb/server/user"
 
+	"strings"
+
 	"github.com/alexedwards/scs"
 	"github.com/google/uuid"
 )
@@ -53,6 +55,7 @@ func main() {
 	// API v1
 	http.HandleFunc("/api/1/login", loginHandler(manager, store))
 	http.HandleFunc("/api/1/list", listHandler(manager))
+	http.HandleFunc("/api/1/search", searchHandler(manager))
 	http.HandleFunc("/api/1/pull", pullHandler(manager))
 	http.HandleFunc("/api/1/save", saveHandler(manager))
 	http.HandleFunc("/api/1/edit", editHandler(manager))
@@ -153,6 +156,50 @@ func listHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *htt
 	}
 }
 
+func searchHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		db := getDB(w, r, sessionManager)
+		if db == nil {
+			// This doesn't write an error because we already did that
+			return
+		}
+
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, "Failed to parse form.", 400)
+			return
+		}
+
+		query := r.PostFormValue("query")
+		if len(query) == 0 {
+			http.Error(w, "Invalid search query", 400)
+			return
+		}
+
+		results, err := db.Search(query, storage.SearchOptions{Limit: 5})
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
+		jsonResults := make([]storage.JSONFile, len(results))
+		for i, result := range results {
+			jsonResults[i] = storage.JSONFile{
+				Name:  result.Name(),
+				State: "file",
+				Id:    result.ID(),
+			}
+		}
+
+		raw, err := json.Marshal(jsonResults)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		fmt.Fprint(w, string(raw))
+	}
+}
+
 func pullHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		db := getDB(w, r, sessionManager)
@@ -197,7 +244,10 @@ func saveHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *htt
 			return
 		}
 
-		p := path.Join("unfiled", filename)
+		p := filename
+		if strings.LastIndex(filename, "/") == -1 {
+			p = path.Join("unfiled", p)
+		}
 		err = db.NewFile(p, content)
 		if err != nil {
 			http.Error(w, err.Error(), 500)

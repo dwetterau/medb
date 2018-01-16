@@ -12,3 +12,18 @@ export function handlePush() {
         notify.show('Pushed successfully.')
     })
 }
+
+export function fetchGitInfo(callback) {
+    $.get("/api/1/git/info", (info) => {
+        callback(JSON.parse(info))
+    })
+}
+
+export function emptyGitInfo() {
+    return {
+        lastCommit: "",
+        lastPull: "",
+        remoteAheadBy: "",
+        localAheadBy: "",
+    }
+}

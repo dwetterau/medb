@@ -34,28 +34,25 @@
 }
 
 .editfile-0-0-1 {
-    width: 0px;
-    flex-grow: 0;
-    flex-basis: 0px;
-}
-
-.editfile-0-0-2 {
     display: flex;
     flex-grow: 1;
     flex-basis: 0px;
     min-height: fit-content;
-    justify-content: center;
+    padding-left: 104px;
+    padding-right: 104px;
 }
 
 .editfile-page-1 {
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
+    flex-basis: 0px;
+    min-height: 100vh;
     padding-top: 20px;
     background: rgb(255, 255, 255);
-    min-height: 100vh;
 }
 
-.editfile-0-0-2-0-0 {
+.editfile-0-0-1-0-0 {
     display: flex;
     padding-left: 17px;
     padding-right: 536px;
@@ -67,15 +64,18 @@
     flex-direction: column;
 }
 
-.editfile-0-0-2-0-0-1 {
+.editfile-0-0-1-0-0-1 {
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
+    flex-basis: 0px;
+    min-height: fit-content;
     margin-left: 10px;
     padding-top: 2px;
     padding-bottom: 18px;
 }
 
-.editfile-0-0-2-0-0-1-0 {
+.editfile-0-0-1-0-0-1-0 {
     display: flex;
 }
 
@@ -94,15 +94,20 @@
     word-wrap: break-word;
 }
 
-.editfile-0-0-2-0-1 {
+.editfile-0-0-1-0-0-1-0-1 {
+    height: 0px;
+    flex-grow: 1;
+    flex-basis: 0px;
+}
+
+.editfile-0-0-1-0-1 {
     display: flex;
     padding-left: 17px;
-    padding-right: 384px;
 }
 
 .editfile-fileidentifier-8 {
-    width: 367px;
-    flex-shrink: 0;
+    flex-grow: 0.48868175765645805;
+    flex-basis: 0px;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     color: #000000;
     font-size: 14px;
@@ -115,9 +120,55 @@
     word-wrap: break-word;
 }
 
-.editfile-0-0-2-0-2 {
+.editfile-0-0-1-0-1-1 {
+    height: 0px;
+    flex-grow: 0.511318242343542;
+    flex-basis: 0px;
+}
+
+.editfile-0-0-1-0-2 {
     display: flex;
-    margin-top: 25px;
+    margin-top: 24px;
+}
+
+.editfile-rectangle_9 {
+    width: 768px;
+    height: 302px;
+    flex-shrink: 0;
+    overflow: scroll;
+    position: relative;
+}
+
+.editfile-0-0-1-0-2-0-0 {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    position: absolute;
+    width: 100%;
+    min-height: 100%;
+}
+
+.editfile-0-0-1-0-2-0-0-0 {
+    display: flex;
+    flex-grow: 1;
+    flex-basis: 0px;
+    min-height: fit-content;
+}
+
+.editfile-0-0-1-0-2-0-0-0-0 {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-basis: 0px;
+    min-height: fit-content;
+    padding-top: 1px;
+}
+
+.editfile-0-0-1-0-2-0-0-0-0-0 {
+    display: flex;
+    flex-grow: 1;
+    flex-basis: 0px;
+    min-height: fit-content;
     padding-left: 16px;
     padding-right: 18px;
 }
@@ -126,14 +177,12 @@
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    min-height: 327px;
 }
 
-.editfile-0-0-2-0-3 {
+.editfile-0-0-1-0-3 {
     display: flex;
-    margin-top: 14px;
-    padding-left: 17px;
-    padding-right: 437px;
+    margin-top: 18px;
+    padding-left: 16px;
 }
 
 .editfile-gitoptions_instance-0 {
@@ -142,7 +191,13 @@
     flex-direction: column;
 }
 
-.editfile-0-0-2-0-4 {
+.editfile-0-0-1-0-3-1 {
+    height: 0px;
+    flex-grow: 1;
+    flex-basis: 0px;
+}
+
+.editfile-0-0-1-0-4 {
     width: 0px;
     flex-grow: 1;
     flex-basis: 0px;

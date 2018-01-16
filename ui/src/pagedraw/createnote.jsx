@@ -15,7 +15,7 @@ function render() {
                 </div>
                 <div className="createnote-0-0-2">
                     <div className="createnote-gitoptions_instance-9">
-                        <Gitoptions handleCommit={this.props.handleCommit} handlePull={this.props.handlePull} handlePush={this.props.handlePush} /> 
+                        <Gitoptions handleCommit={this.props.handleCommit} handlePull={this.props.handlePull} handlePush={this.props.handlePush} lastCommit={this.props.lastCommit} lastPull={this.props.lastPull} remoteAheadBy={this.props.remoteAheadBy} localAheadBy={this.props.localAheadBy} /> 
                     </div>
                 </div>
             </div>

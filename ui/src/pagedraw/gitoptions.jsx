@@ -27,6 +27,28 @@ function render() {
                         </div>
                     </div>
                 </div>
+                <div className="gitoptions-0-0-3">
+                    <div className="gitoptions-rectangle_8">
+                        <div className="gitoptions-0-0-3-0-0">
+                            <div className="gitoptions-text_4">
+                                { this.props.lastCommit }
+                            </div>
+                        </div>
+                        <div className="gitoptions-0-0-3-0-1">
+                            <div className="gitoptions-text_4-4">
+                                { this.props.lastPull }
+                            </div>
+                        </div>
+                        <div className="gitoptions-0-0-3-0-2">
+                            <div className="gitoptions-text_4-2">
+                                { this.props.remoteAheadBy }
+                            </div>
+                            <div className="gitoptions-text_4-7">
+                                { this.props.localAheadBy }
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>;

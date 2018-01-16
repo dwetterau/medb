@@ -49,7 +49,7 @@ func NewDB(rootPath string) DB {
 }
 
 type JSONFile struct {
-	Name     string      `json:"name""`
+	Name     string      `json:"name"`
 	State    string      `json:"state"`
 	Contents []*JSONFile `json:"contents"`
 	Id       uuid.UUID   `json:"id"`
@@ -130,12 +130,12 @@ func (d dbImpl) AllFiles() ([]File, error) {
 				case <-stopChan:
 					return
 				case filename := <-workChan:
-					bytes, fileErr := ioutil.ReadFile(filename)
+					rawBytes, fileErr := ioutil.ReadFile(filename)
 					if fileErr != nil {
 						resultChan <- fileOrError{err: fileErr}
 						continue
 					}
-					file, err := parseFile(string(bytes))
+					file, err := parseFile(string(rawBytes))
 					if err != nil {
 						resultChan <- fileOrError{err: fileErr}
 						continue

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Notifications from 'react-notify-toast';
 import PagedrawGeneratedPage from './pagedraw/app'
 import $ from 'jquery';
-import {handlePull, handlePush} from './Api'
+import {emptyGitInfo, fetchGitInfo, handlePull, handlePush} from './Api'
 
 class App extends Component {
   constructor() {
@@ -11,22 +11,35 @@ class App extends Component {
           filename: "",
           content: "",
           searchResultList: [],
-      }
+          gitInfo: emptyGitInfo(),
+      };
+
+      // Kick off populating git info
+      this.populateGitInfo();
+  }
+
+  componentWillReceiveProps() {
+      // Kick off populating git info
+      this.populateGitInfo();
+  }
+
+  populateGitInfo() {
+      fetchGitInfo((newInfo) => {
+          this.setState({
+              gitInfo: newInfo,
+          })
+      })
   }
 
   handleFilenameChange(e) {
        this.setState({
            filename: e.target.value,
-           content: this.state.content,
-           searchResultList: this.state.searchResultList,
       })
   }
 
   handleContentChange(e) {
       this.setState({
-          filename: this.state.filename,
           content: e.target.value,
-          searchResultList: this.state.searchResultList,
       })
   }
 
@@ -46,8 +59,6 @@ class App extends Component {
           query: e.target.value,
       }).done((data) => {
           this.setState({
-              filename: this.state.filename,
-              content: this.state.content,
               searchResultList: JSON.parse(data),
           })
       })
@@ -127,6 +138,10 @@ class App extends Component {
           handleExpand={this.handleExpand.bind(this)}
           handlePull={handlePull}
           handlePush={handlePush}
+          lastCommit={this.state.gitInfo.lastCommit}
+          lastPull={this.state.gitInfo.lastPull}
+          remoteAheadBy={this.state.gitInfo.remoteAheadBy}
+          localAheadBy={this.state.gitInfo.localAheadBy}
         />
         <Notifications />
     </div>;

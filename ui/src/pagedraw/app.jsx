@@ -47,7 +47,7 @@ function render() {
                                 </div>
                                 <div className="app-0-0-1-0-0-1-1">
                                     <div className="app-createnote_instance-3">
-                                        <Createnote content={this.props.content} filename={this.props.filename} handleContentChange={this.props.handleContentChange} handleFilenameChange={this.props.handleFilenameChange} handleCommit={this.props.handleSaveNote} handlePull={this.props.handlePull} handlePush={this.props.handlePush} /> 
+                                        <Createnote content={this.props.content} filename={this.props.filename} handleContentChange={this.props.handleContentChange} handleFilenameChange={this.props.handleFilenameChange} handleCommit={this.props.handleSaveNote} handlePull={this.props.handlePull} handlePush={this.props.handlePush} lastCommit={this.props.lastCommit} lastPull={this.props.lastPull} remoteAheadBy={this.props.remoteAheadBy} localAheadBy={this.props.localAheadBy} /> 
                                     </div>
                                 </div>
                             </div>

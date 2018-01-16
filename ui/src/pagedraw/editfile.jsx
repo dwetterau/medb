@@ -16,37 +16,49 @@ function render() {
                         <Titlebar /> 
                     </div>
                 </div>
-                <div className="editfile-0-0-1" /> 
-                <div className="editfile-0-0-2">
+                <div className="editfile-0-0-1">
                     <div className="editfile-page-1">
-                        <div className="editfile-0-0-2-0-0">
+                        <div className="editfile-0-0-1-0-0">
                             <div className="editfile-viewstategroup_instance-0">
                                 <Viewstategroup handleClick={this.props.handleViewStateChange} state={this.props.viewState} /> 
                             </div>
-                            <div className="editfile-0-0-2-0-0-1">
-                                <div className="editfile-0-0-2-0-0-1-0">
+                            <div className="editfile-0-0-1-0-0-1">
+                                <div className="editfile-0-0-1-0-0-1-0">
                                     <div className="editfile-filename-8">
                                         { this.props.fileName }
+                                    </div>
+                                    <div className="editfile-0-0-1-0-0-1-0-1" /> 
+                                </div>
+                            </div>
+                        </div>
+                        <div className="editfile-0-0-1-0-1">
+                            <div className="editfile-fileidentifier-8">
+                                { this.props.fileID }
+                            </div>
+                            <div className="editfile-0-0-1-0-1-1" /> 
+                        </div>
+                        <div className="editfile-0-0-1-0-2">
+                            <div className="editfile-rectangle_9">
+                                <div className="editfile-0-0-1-0-2-0-0">
+                                    <div className="editfile-0-0-1-0-2-0-0-0">
+                                        <div className="editfile-0-0-1-0-2-0-0-0-0">
+                                            <div className="editfile-0-0-1-0-2-0-0-0-0-0">
+                                                <div className="editfile-filecontent_instance-4">
+                                                    <Filecontent state={this.props.viewState} fileContent={this.props.fileContent} handleContentChange={this.props.handleContentChange} /> 
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div className="editfile-0-0-2-0-1">
-                            <div className="editfile-fileidentifier-8">
-                                { this.props.fileID }
-                            </div>
-                        </div>
-                        <div className="editfile-0-0-2-0-2">
-                            <div className="editfile-filecontent_instance-4">
-                                <Filecontent state={this.props.viewState} fileContent={this.props.fileContent} handleContentChange={this.props.handleContentChange} /> 
-                            </div>
-                        </div>
-                        <div className="editfile-0-0-2-0-3">
+                        <div className="editfile-0-0-1-0-3">
                             <div className="editfile-gitoptions_instance-0">
-                                <Gitoptions handleCommit={this.props.handleCommit} handlePull={this.props.handlePull} handlePush={this.props.handlePush} /> 
+                                <Gitoptions handleCommit={this.props.handleCommit} handlePull={this.props.handlePull} handlePush={this.props.handlePush} lastCommit={this.props.lastCommit} lastPull={this.props.lastPull} remoteAheadBy={this.props.remoteAheadBy} localAheadBy={this.props.localAheadBy} /> 
                             </div>
+                            <div className="editfile-0-0-1-0-3-1" /> 
                         </div>
-                        <div className="editfile-0-0-2-0-4" /> 
+                        <div className="editfile-0-0-1-0-4" /> 
                     </div>
                 </div>
             </div>

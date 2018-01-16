@@ -70,6 +70,9 @@ func main() {
 		panic(err)
 	}
 	aheadBehind, err := db.AheadBehindOriginMaster()
+	if err != nil {
+		panic(err)
+	}
 	fmt.Printf(
 		"Last committed %v ago, last pulled %v ago. Origin is ahead by %d and we are ahead by %d\n",
 		time.Since(lastCommitTS),

@@ -63,6 +63,7 @@ func main() {
 	http.HandleFunc("/api/1/commit", handlerTimer("commit", commitHandler(manager)))
 	http.HandleFunc("/api/1/edit", handlerTimer("edit", editHandler(manager)))
 	http.HandleFunc("/api/1/load", handlerTimer("load", loadHandler(manager)))
+	http.HandleFunc("/api/1/git/info", handlerTimer("git/info", gitInfoHandler(manager)))
 
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	if err != nil {
@@ -375,5 +376,54 @@ func editHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *htt
 			return
 		}
 		fmt.Fprint(w, successJSON)
+	}
+}
+
+func gitInfoHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		db := getDB(w, r, sessionManager)
+		if db == nil {
+			// This doesn't write an error because we already did that
+			return
+		}
+
+		// Fetch so that our origin counts are accurate later
+		err := db.Fetch()
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		lastCommitTS, err := db.LastCommitTS()
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		lastPullTS, err := db.LastPullTS()
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		aheadBehind, err := db.AheadBehindOriginMaster()
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		gitInfoStruct := struct {
+			LastCommit    string `json:"lastCommit"`
+			LastPull      string `json:"lastPull"`
+			RemoteAheadBy string `json:"remoteAheadBy"`
+			LocalAheadBy  string `json:"localAheadBy"`
+		}{
+			LastCommit:    fmt.Sprintf("Last Commit: %v ago.", time.Since(lastCommitTS)),
+			LastPull:      fmt.Sprintf("Last Pull: %v ago.", time.Since(lastPullTS)),
+			RemoteAheadBy: fmt.Sprintf("Remote ahead by: %d", aheadBehind.OriginAheadBy),
+			LocalAheadBy:  fmt.Sprintf("Local ahead by: %d", aheadBehind.LocalAheadBy),
+		}
+		raw, err := json.Marshal(gitInfoStruct)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		fmt.Fprint(w, string(raw))
 	}
 }

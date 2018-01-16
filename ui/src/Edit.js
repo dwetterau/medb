@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Notifications, {notify} from 'react-notify-toast';
 import PagedrawGeneratedPage from './pagedraw/editfile'
 import $ from 'jquery';
-import {handlePull, handlePush} from './Api'
+import {emptyGitInfo, fetchGitInfo, handlePull, handlePush} from './Api'
 
 class EditFile extends Component {
   constructor(props) {
@@ -10,7 +10,28 @@ class EditFile extends Component {
       this.state = {
           fileContent: props.file.content,
           viewState: "viewing",
-      }
+          gitInfo: emptyGitInfo(),
+      };
+
+      // Kick off populating git info
+      this.populateGitInfo();
+  }
+
+  componentWillReceiveProps(nextProps) {
+      this.setState({
+          fileContent: nextProps.file.content,
+      });
+
+      // Kick off populating git info
+      this.populateGitInfo();
+  }
+
+  populateGitInfo() {
+      fetchGitInfo((newInfo) => {
+          this.setState({
+              gitInfo: newInfo,
+          })
+      })
   }
 
   handleContentChange(e) {
@@ -25,13 +46,13 @@ class EditFile extends Component {
           fileContent: this.state.fileContent,
       }).done(() => {
           notify.show("Committed successfully.");
+          this.populateGitInfo()
       })
   }
 
   handleViewStateChange() {
       let newViewState = (this.state.viewState === "viewing") ? "editing" : "viewing";
       this.setState({
-          fileContent: this.state.fileContent,
           viewState: newViewState,
       })
   }
@@ -48,6 +69,10 @@ class EditFile extends Component {
               handlePush={handlePush}
               handleViewStateChange={this.handleViewStateChange.bind(this)}
               viewState={this.state.viewState}
+              lastCommit={this.state.gitInfo.lastCommit}
+              lastPull={this.state.gitInfo.lastPull}
+              remoteAheadBy={this.state.gitInfo.remoteAheadBy}
+              localAheadBy={this.state.gitInfo.localAheadBy}
           />
           <Notifications />
       </div>;

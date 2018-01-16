@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Notifications from 'react-notify-toast';
 import PagedrawGeneratedPage from './pagedraw/app'
 import $ from 'jquery';
 import {handlePull, handlePush} from './Api'
@@ -113,7 +114,7 @@ class App extends Component {
   }
 
   render() {
-    return (
+    return <div>
         <PagedrawGeneratedPage
           rootFolderList={this.props.rootFolderList}
           filename={this.state.filename}
@@ -127,7 +128,9 @@ class App extends Component {
           handlePull={handlePull}
           handlePush={handlePush}
         />
-    );
+        <Notifications />
+    </div>;
+
   }
 }
 

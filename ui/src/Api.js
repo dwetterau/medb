@@ -1,13 +1,14 @@
 import $ from 'jquery';
+import {notify} from 'react-notify-toast';
 
 export function handlePull() {
     $.get("/api/1/pull", () => {
-        window.location.reload()
+        notify.show('Pulled successfully.')
     })
 }
 
 export function handlePush() {
     $.get("/api/1/push", () => {
-        window.location.reload()
+        notify.show('Pushed successfully.')
     })
 }

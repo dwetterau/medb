@@ -9,6 +9,7 @@ class EditFile extends Component {
       super();
       this.state = {
           fileContent: props.file.content,
+          viewState: "viewing",
       }
   }
 
@@ -27,6 +28,14 @@ class EditFile extends Component {
       })
   }
 
+  handleViewStateChange() {
+      let newViewState = (this.state.viewState === "viewing") ? "editing" : "viewing";
+      this.setState({
+          fileContent: this.state.fileContent,
+          viewState: newViewState,
+      })
+  }
+
   render() {
       return <div>
           <PagedrawGeneratedPage
@@ -37,6 +46,8 @@ class EditFile extends Component {
               handleCommit={this.handleCommit.bind(this)}
               handlePull={handlePull}
               handlePush={handlePush}
+              handleViewStateChange={this.handleViewStateChange.bind(this)}
+              viewState={this.state.viewState}
           />
           <Notifications />
       </div>;

@@ -4,13 +4,15 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"log"
+	"medb/server/stopwatch"
+	"medb/server/user"
 	"medb/storage"
 	"net/http"
+	"os"
 	"path"
-
-	"medb/server/user"
-
 	"strings"
+	"time"
 
 	"github.com/alexedwards/scs"
 	"github.com/google/uuid"
@@ -41,8 +43,8 @@ func main() {
 	staticServer := http.FileServer(http.Dir(staticDir))
 
 	http.Handle("/static/", staticServer)
-	http.HandleFunc("/", rootHandler(staticDir))
-	http.HandleFunc("/edit/", editPageHandler(staticDir))
+	http.HandleFunc("/", handlerTimer("rootView", rootViewHandler(staticDir)))
+	http.HandleFunc("/edit/", handlerTimer("editView", editViewHandler(staticDir)))
 
 	// Session manager setup
 	manager := scs.NewCookieManager(sessionSecret)
@@ -53,13 +55,14 @@ func main() {
 	store := user.NewStore(userFilePath)
 
 	// API v1
-	http.HandleFunc("/api/1/login", loginHandler(manager, store))
-	http.HandleFunc("/api/1/list", listHandler(manager))
-	http.HandleFunc("/api/1/search", searchHandler(manager))
-	http.HandleFunc("/api/1/pull", pullHandler(manager))
-	http.HandleFunc("/api/1/save", saveHandler(manager))
-	http.HandleFunc("/api/1/edit", editHandler(manager))
-	http.HandleFunc("/api/1/load", loadHandler(manager))
+	http.HandleFunc("/api/1/login", handlerTimer("login", loginHandler(manager, store)))
+	http.HandleFunc("/api/1/list", handlerTimer("list", listHandler(manager)))
+	http.HandleFunc("/api/1/search", handlerTimer("search", searchHandler(manager)))
+	http.HandleFunc("/api/1/pull", handlerTimer("pull", pullHandler(manager)))
+	http.HandleFunc("/api/1/push", handlerTimer("push", pushHandler(manager)))
+	http.HandleFunc("/api/1/commit", handlerTimer("commit", commitHandler(manager)))
+	http.HandleFunc("/api/1/edit", handlerTimer("edit", editHandler(manager)))
+	http.HandleFunc("/api/1/load", handlerTimer("load", loadHandler(manager)))
 
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	if err != nil {
@@ -72,14 +75,27 @@ const (
 	successJSON        = "{success: true}"
 )
 
-func rootHandler(staticDir string) func(w http.ResponseWriter, r *http.Request) {
+var logger = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+
+func handlerTimer(
+	name string,
+	handler func(w http.ResponseWriter, r *http.Request),
+) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+		handler(w, r)
+		logger.Printf("Handled %s in %v", name, time.Since(start))
+	}
+}
+
+func rootViewHandler(staticDir string) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fullPath := staticDir + "/" + r.URL.Path[1:]
 		http.ServeFile(w, r, fullPath)
 	}
 }
 
-func editPageHandler(staticDir string) func(w http.ResponseWriter, r *http.Request) {
+func editViewHandler(staticDir string) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, staticDir+"/index.html")
 	}
@@ -115,6 +131,7 @@ func loginHandler(sessionManager *scs.Manager, store user.Store) func(w http.Res
 }
 
 func getDB(w http.ResponseWriter, r *http.Request, sessionManager *scs.Manager) storage.DB {
+	defer stopwatch.Start("getDB").Stop(logger)
 	session := sessionManager.Load(r)
 
 	rootPath, err := session.GetString(rootPathCookieName)
@@ -216,7 +233,23 @@ func pullHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *htt
 	}
 }
 
-func saveHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *http.Request) {
+func pushHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		db := getDB(w, r, sessionManager)
+		if db == nil {
+			// This doesn't write an error because we already did that
+			return
+		}
+		err := db.Push()
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		fmt.Fprint(w, successJSON)
+	}
+}
+
+func commitHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		db := getDB(w, r, sessionManager)
 		if db == nil {
@@ -237,13 +270,6 @@ func saveHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *htt
 			http.Error(w, "Invalid filename", 400)
 		}
 
-		// Pull first to minimize the chance of a conflict
-		err = db.Pull()
-		if err != nil {
-			http.Error(w, err.Error(), 500)
-			return
-		}
-
 		p := filename
 		if strings.LastIndex(filename, "/") == -1 {
 			p = path.Join("unfiled", p)
@@ -254,12 +280,7 @@ func saveHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *htt
 			return
 		}
 
-		_, err = db.CommitToGIT(fmt.Sprintf("MeDB Sync - saving unfiled note %s", filename))
-		if err != nil {
-			http.Error(w, err.Error(), 500)
-			return
-		}
-		err = db.Push()
+		_, err = db.CommitToGIT(fmt.Sprintf("MeDB Sync - saving note at %s", p))
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return
@@ -327,13 +348,6 @@ func editHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *htt
 			return
 		}
 
-		// Pull first to minimize the chance of a conflict
-		err = db.Pull()
-		if err != nil {
-			http.Error(w, err.Error(), 500)
-			return
-		}
-
 		fileIDRaw := r.PostFormValue("fileID")
 		content := r.PostFormValue("fileContent")
 
@@ -359,12 +373,6 @@ func editHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *htt
 			http.Error(w, err.Error(), 500)
 			return
 		}
-		err = db.Push()
-		if err != nil {
-			http.Error(w, err.Error(), 500)
-			return
-		}
-
 		fmt.Fprint(w, successJSON)
 	}
 }

@@ -19,11 +19,11 @@ function render() {
                                         <Folderlistelement state={elem.state} name={elem.name} contents={elem.contents} handleExpand={this.props.handleExpand} /> 
                                     </div>
                                 </div>
-                                <div className="search-0-0-1-0-0-0-1" /> 
                             </div>;
                         }) }
                     </div>
                 </div>
+                <div className="search-0-0-2" /> 
             </div>
         </div>
     </div>;

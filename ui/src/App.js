@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PagedrawGeneratedPage from './pagedraw/app'
 import $ from 'jquery';
+import {handlePull, handlePush} from './Api'
 
 class App extends Component {
   constructor() {
@@ -29,17 +30,11 @@ class App extends Component {
   }
 
   handleSaveNote() {
-      $.post("/api/1/save", {
+      $.post("/api/1/commit", {
           filename: this.state.filename,
           content: this.state.content,
       }).done(() => {
           // TODO: Something nicer on the refresh side?
-          window.location = "/"
-      })
-  }
-
-  handlePull() {
-      $.get("/api/1/pull", () => {
           window.location = "/"
       })
   }
@@ -129,7 +124,8 @@ class App extends Component {
           handleContentChange={this.handleContentChange.bind(this)}
           handleSaveNote={this.handleSaveNote.bind(this)}
           handleExpand={this.handleExpand.bind(this)}
-          handlePull={this.handlePull}
+          handlePull={handlePull}
+          handlePush={handlePush}
         />
     );
   }

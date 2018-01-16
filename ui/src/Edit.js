@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PagedrawGeneratedPage from './pagedraw/editfile'
 import $ from 'jquery';
+import {handlePull, handlePush} from './Api'
 
 class EditFile extends Component {
   constructor(props) {
@@ -16,7 +17,16 @@ class EditFile extends Component {
       })
   }
 
-  handleSave() {
+  handleCommit() {
+      $.post("/api/1/edit", {
+          fileID: this.props.file.id,
+          fileContent: this.state.fileContent,
+      }).done(() => {
+          window.location = "/edit/" + this.props.file.id
+      })
+  }
+
+  handlePull() {
       $.post("/api/1/edit", {
           fileID: this.props.file.id,
           fileContent: this.state.fileContent,
@@ -32,7 +42,9 @@ class EditFile extends Component {
           fileName={this.props.file.name}
           fileContent={this.state.fileContent}
           handleContentChange={this.handleContentChange.bind(this)}
-          handleSave={this.handleSave.bind(this)}
+          handleCommit={this.handleCommit.bind(this)}
+          handlePull={handlePull}
+          handlePush={handlePush}
       />;
   }
 }

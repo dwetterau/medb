@@ -16,7 +16,7 @@ func main() {
 		panic(err)
 	}
 
-	hash, err := bcrypt.GenerateFromPassword(passwordBytes, 15)
+	hash, err := bcrypt.GenerateFromPassword(passwordBytes, bcrypt.DefaultCost)
 	if err != nil {
 		panic(err)
 	}

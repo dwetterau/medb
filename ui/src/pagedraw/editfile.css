@@ -53,7 +53,7 @@
     display: flex;
     flex-direction: column;
     padding-top: 20px;
-    padding-bottom: 173px;
+    padding-bottom: 78px;
     background: rgb(255, 255, 255);
     min-height: 100vh;
 }
@@ -159,41 +159,15 @@
 
 .editfile-0-0-2-0-3 {
     display: flex;
-    margin-top: 20px;
+    margin-top: 15px;
     padding-left: 17px;
     padding-right: 437px;
 }
 
-.editfile-savebutton-8 {
+.editfile-gitoptions_instance-0 {
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    padding-top: 9px;
-    padding-bottom: 9px;
-    border-radius: 1px;
-    cursor: pointer;
-    background: rgb(255, 255, 255);
-    border: 1px solid rgba(0, 0, 0, 0.5);
-}
-
-.editfile-0-0-2-0-3-0-0 {
-    display: flex;
-    padding-left: 138px;
-    padding-right: 137px;
-}
-
-.editfile-text_3 {
-    width: 37px;
-    flex-shrink: 0;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    color: #000000;
-    font-size: 14px;
-    line-height: normal;
-    letter-spacing: 0px;
-    font-weight: normal;
-    font-style: normal;
-    text-decoration: none;
-    text-align: center;
-    word-wrap: break-word;
 }
 
 * {

@@ -48,9 +48,6 @@
 
 .search-0-0-1 {
     display: flex;
-    flex-grow: 1;
-    flex-basis: 0px;
-    min-height: fit-content;
     margin-top: 21px;
     padding-left: 15px;
     padding-right: 52px;
@@ -80,7 +77,7 @@
     min-width: 263px;
 }
 
-.search-0-0-1-0-0-0-1 {
+.search-0-0-2 {
     width: 0px;
     flex-grow: 1;
     flex-basis: 0px;

@@ -9,9 +9,9 @@ function render() {
                 <div className="titlebar-0-0-0">
                     <div className="titlebar-rectangle-8">
                         <div className="titlebar-0-0-0-0-0">
-                            <div onClick={() => {window.location = "/"}} className="titlebar-text-7">
-                                MeDB
-                            </div>
+                            <a href="/" className="titlebar-0-0-0-0-0-0">
+                                <div className="titlebar-text-7">MeDB</div>
+                            </a>
                         </div>
                     </div>
                 </div>

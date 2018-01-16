@@ -41,24 +41,13 @@ function render() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="app-0-0-1-0-0-1">
+                            <div className="app-rightcolumn-2">
                                 <div className="app-0-0-1-0-0-1-0">
-                                    <div className="app-rightcolumn-2">
-                                        <div className="app-0-0-1-0-0-1-0-0-0">
-                                            <div className="app-yourfiles-7">Add a file</div>
-                                        </div>
-                                        <div className="app-0-0-1-0-0-1-0-0-1">
-                                            <div className="app-createnote_instance-3">
-                                                <Createnote content={this.props.content} filename={this.props.filename} handleContentChange={this.props.handleContentChange} handleFilenameChange={this.props.handleFilenameChange} handleSaveNote={this.props.handleSaveNote} /> 
-                                            </div>
-                                        </div>
-                                        <div className="app-0-0-1-0-0-1-0-0-2">
-                                            <div onClick={this.props.handlePull} className="app-pullbutton-1">
-                                                <div className="app-0-0-1-0-0-1-0-0-2-0-0">
-                                                    <div className="app-pull-5">Pull</div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div className="app-yourfiles-7">Add a file</div>
+                                </div>
+                                <div className="app-0-0-1-0-0-1-1">
+                                    <div className="app-createnote_instance-3">
+                                        <Createnote content={this.props.content} filename={this.props.filename} handleContentChange={this.props.handleContentChange} handleFilenameChange={this.props.handleFilenameChange} handleCommit={this.props.handleSaveNote} handlePull={this.props.handlePull} handlePush={this.props.handlePush} /> 
                                     </div>
                                 </div>
                             </div>

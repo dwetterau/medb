@@ -268,6 +268,7 @@ func commitHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *h
 
 		if len(filename) == 0 {
 			http.Error(w, "Invalid filename", 400)
+			return
 		}
 
 		p := filename
@@ -280,7 +281,7 @@ func commitHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *h
 			return
 		}
 
-		_, err = db.CommitToGIT(fmt.Sprintf("MeDB Sync - saving note at %s", p))
+		err = db.CommitToGIT(fmt.Sprintf("MeDB Sync - saving note at %s", p))
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return
@@ -368,7 +369,7 @@ func editHandler(sessionManager *scs.Manager) func(w http.ResponseWriter, r *htt
 			return
 		}
 
-		_, err = db.CommitToGIT(fmt.Sprintf("MeDB Sync - saving updated file %s", f.ID()))
+		err = db.CommitToGIT(fmt.Sprintf("MeDB Sync - saving updated file %s", f.ID()))
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return

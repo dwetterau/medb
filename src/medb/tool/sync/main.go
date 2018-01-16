@@ -55,21 +55,35 @@ func main() {
 		}
 	}
 	// Step 4: Create a new git commit with all the changes + all new files
-	committed, err := db.CommitToGIT(fmt.Sprintf("MeDB Sync - %v", time.Now().Unix()))
+	err = db.CommitToGIT(fmt.Sprintf("MeDB Sync - %v", time.Now().Unix()))
 	if err != nil {
 		panic(err)
 	}
 
-	if !committed {
-		// There weren't changes, just return
-		fmt.Println("Nothing to commit, not pushing.")
-		return
+	// Print some stuff for fun
+	lastCommitTS, err := db.LastCommitTS()
+	if err != nil {
+		panic(err)
 	}
+	lastPullTS, err := db.LastPullTS()
+	if err != nil {
+		panic(err)
+	}
+	aheadBehind, err := db.AheadBehindOriginMaster()
+	fmt.Printf(
+		"Last committed %v ago, last pulled %v ago. Origin is ahead by %d and we are ahead by %d\n",
+		time.Since(lastCommitTS),
+		time.Since(lastPullTS),
+		aheadBehind.OriginAheadBy,
+		aheadBehind.LocalAheadBy,
+	)
 
 	// Step 5: Rebase on new changes?
 	// Step 6: Push out changes
-	err = db.Push()
-	if err != nil {
-		panic(err)
+	if aheadBehind.LocalAheadBy > 0 {
+		err = db.Push()
+		if err != nil {
+			panic(err)
+		}
 	}
 }

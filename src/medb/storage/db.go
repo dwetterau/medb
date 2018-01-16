@@ -11,6 +11,10 @@ import (
 
 	"time"
 
+	"bytes"
+
+	"strconv"
+
 	"github.com/google/uuid"
 )
 
@@ -29,9 +33,15 @@ type DB interface {
 	SaveFile(File) error
 	LoadFile(fileID uuid.UUID) (File, error)
 	NewFile(path string, content string) error
-	CommitToGIT(message string) (bool, error)
+
+	// TODO: Move to a git interface?
+	CommitToGIT(message string) error
 	Push() error
 	Pull() error
+	Fetch() error
+	LastCommitTS() (time.Time, error)
+	LastPullTS() (time.Time, error)
+	AheadBehindOriginMaster() (AheadBehindStruct, error)
 }
 
 func NewDB(rootPath string) DB {
@@ -47,6 +57,11 @@ type JSONFile struct {
 
 type SearchOptions struct {
 	Limit int
+}
+
+type AheadBehindStruct struct {
+	OriginAheadBy int64
+	LocalAheadBy  int64
 }
 
 type dbImpl struct {
@@ -298,73 +313,159 @@ func (d dbImpl) NewFile(desiredPath string, content string) error {
 	return d.SaveFile(fileToSave)
 }
 
-// Returns true if a new commit was made, false otherwise
-func (d dbImpl) CommitToGIT(message string) (bool, error) {
+// Changes the working directory to the rootPath and returns a defer to move
+// it back to the original.
+func (d dbImpl) moveCurDir() (func(), error) {
 	curDir, err := os.Getwd()
 	if err != nil {
-		return false, err
+		return nil, err
 	}
-	defer os.Chdir(curDir)
+	toDefer := func() { os.Chdir(curDir) }
 
 	err = os.Chdir(d.rootPath)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
-	cmd := exec.Command("git", "add", "-A")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
+	return toDefer, nil
+}
+
+// Runs the command and returns a string of the output
+func (d dbImpl) runCommand(name string, args ...string) (string, error) {
+	cmd := exec.Command(name, args...)
+	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		return false, err
+		return "", err
+	}
+	if err := cmd.Start(); err != nil {
+		return "", err
+	}
+	buf := &bytes.Buffer{}
+	buf.ReadFrom(stdout)
+
+	if err := cmd.Wait(); err != nil {
+		return "", err
+	}
+
+	return buf.String(), nil
+}
+
+// Returns true if a new commit was made, false otherwise
+func (d dbImpl) CommitToGIT(message string) error {
+	toDefer, err := d.moveCurDir()
+	if err != nil {
+		return err
+	}
+	defer toDefer()
+
+	// Add everything in the directory to be committed
+	_, err = d.runCommand("git", "add", "-A")
+	if err != nil {
+		return err
 	}
 
 	// See if there's anything to commit
-	cmd = exec.Command("git", "diff-index", "--quiet", "HEAD")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
+	_, err = d.runCommand("git", "diff-index", "--quiet", "HEAD")
 	if err == nil {
 		// Nothing to commit, return!
-		return false, nil
+		return nil
 	}
 
 	// Now commit everything
-	cmd = exec.Command("git", "commit", "-am", message)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return true, cmd.Run()
+	_, err = d.runCommand("git", "commit", "-am", message)
+	return err
 }
 
 func (d dbImpl) Push() error {
-	curDir, err := os.Getwd()
+	toDefer, err := d.moveCurDir()
 	if err != nil {
 		return err
 	}
-	defer os.Chdir(curDir)
+	defer toDefer()
 
-	err = os.Chdir(d.rootPath)
+	_, err = d.runCommand("git", "push")
+	return err
+}
+
+func (d dbImpl) Fetch() error {
+	toDefer, err := d.moveCurDir()
 	if err != nil {
 		return err
 	}
-	cmd := exec.Command("git", "push")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+	defer toDefer()
+
+	_, err = d.runCommand("git", "fetch")
+	return err
 }
 
 func (d dbImpl) Pull() error {
-	curDir, err := os.Getwd()
+	toDefer, err := d.moveCurDir()
 	if err != nil {
 		return err
 	}
-	defer os.Chdir(curDir)
+	defer toDefer()
 
-	err = os.Chdir(d.rootPath)
+	_, err = d.runCommand("git", "push")
+	return err
+}
+
+func (d dbImpl) LastCommitTS() (time.Time, error) {
+	toDefer, err := d.moveCurDir()
 	if err != nil {
-		return err
+		return time.Time{}, err
 	}
-	cmd := exec.Command("git", "pull")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+	defer toDefer()
+
+	lastCommitTSRaw, err := d.runCommand("git", "log", "-1", "--format=%cd", "--date=unix")
+	if err != nil {
+		return time.Time{}, err
+	}
+	lastCommitTS, err := strconv.ParseInt(strings.TrimSpace(lastCommitTSRaw), 10, 64)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return time.Unix(lastCommitTS, 0), nil
+}
+
+func (d dbImpl) LastPullTS() (time.Time, error) {
+	toDefer, err := d.moveCurDir()
+	if err != nil {
+		return time.Time{}, err
+	}
+	defer toDefer()
+
+	lastPullTSRaw, err := d.runCommand("stat", "-c", "%Y", ".git/FETCH_HEAD")
+	if err != nil {
+		return time.Time{}, err
+	}
+	lastPullTS, err := strconv.ParseInt(strings.TrimSpace(lastPullTSRaw), 10, 64)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return time.Unix(lastPullTS, 0), nil
+}
+
+func (d dbImpl) AheadBehindOriginMaster() (AheadBehindStruct, error) {
+	toDefer, err := d.moveCurDir()
+	if err != nil {
+		return AheadBehindStruct{}, err
+	}
+	defer toDefer()
+
+	leftAndRightRaw, err := d.runCommand("git", "rev-list", "--left-right", "--count", "origin/master...master")
+	if err != nil {
+		return AheadBehindStruct{}, err
+	}
+	leftAndRightStrings := strings.Fields(leftAndRightRaw)
+	if len(leftAndRightStrings) != 2 {
+		return AheadBehindStruct{}, errors.New("unable to parse --left-right output")
+	}
+	originAheadBy, err := strconv.ParseInt(leftAndRightStrings[0], 10, 64)
+	if err != nil {
+		return AheadBehindStruct{}, err
+	}
+	localAheadBy, err := strconv.ParseInt(leftAndRightStrings[1], 10, 64)
+	if err != nil {
+		return AheadBehindStruct{}, err
+	}
+	return AheadBehindStruct{originAheadBy, localAheadBy}, nil
 }

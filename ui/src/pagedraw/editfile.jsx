@@ -40,15 +40,11 @@ function render() {
                         <div className="editfile-0-0-1-0-2">
                             <div className="editfile-rectangle_9">
                                 <div className="editfile-0-0-1-0-2-0-0">
-                                    <div className="editfile-0-0-1-0-2-0-0-0">
-                                        <div className="editfile-0-0-1-0-2-0-0-0-0">
-                                            <div className="editfile-0-0-1-0-2-0-0-0-0-0">
-                                                <div className="editfile-filecontent_instance-4">
-                                                    <Filecontent state={this.props.viewState} fileContent={this.props.fileContent} handleContentChange={this.props.handleContentChange} /> 
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div className="editfile-0-0-1-0-2-0-0-0" /> 
+                                    <div className="editfile-filecontent_instance-4">
+                                        <Filecontent state={this.props.viewState} fileContent={this.props.fileContent} handleContentChange={this.props.handleContentChange} /> 
                                     </div>
+                                    <div className="editfile-0-0-1-0-2-0-0-2" /> 
                                 </div>
                             </div>
                         </div>
@@ -58,7 +54,6 @@ function render() {
                             </div>
                             <div className="editfile-0-0-1-0-3-1" /> 
                         </div>
-                        <div className="editfile-0-0-1-0-4" /> 
                     </div>
                 </div>
             </div>
